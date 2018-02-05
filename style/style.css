@@ -1,0 +1,20 @@
+.jumbotron {
+    text-align: center;
+}
+
+.carousel-inner img {
+    margin: auto;
+}
+
+.carousel {
+    background: #618685;
+}
+
+.jumbotron {
+    background: #80ced6;
+}
+
+body {
+    background: #d5f4e6;
+}
+
