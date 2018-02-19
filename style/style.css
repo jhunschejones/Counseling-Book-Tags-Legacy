@@ -6,15 +6,38 @@
     margin: auto;
 }
 
-.carousel {
-    background: #618685;
+/* #profile {
+    max-width: 90%
+} */
+
+/* .top_fold {
+    margin-top: 0px;
+} */
+
+.top_tron {
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color:#dfdfdf;
+    /* max-height: 40px; */
 }
 
-.jumbotron {
-    background: #80ced6;
+.col-md-6 {
+    padding-top: 20px;
 }
 
-body {
-    background: #d5f4e6;
+/* magic resizing for jumbotron */
+@media only screen and (max-width: 500px) {
+    /* h1 {
+        font-size: 5.9vw !important;
+    }
+    h2 {
+        font-size: 3.0vh;
+    }
+    p {
+    font-size: 2vmin;
+    } */
+    h1 {
+        font-size: 3em !important;
+    }
 }
-
