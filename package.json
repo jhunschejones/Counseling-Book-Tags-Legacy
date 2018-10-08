@@ -1,0 +1,23 @@
+{
+  "name": "counseling-book-tags",
+  "version": "1.0.0",
+  "description": "A web application that allows users to add and access a public book API and custom tags.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jhunschejones/Counseling-Book-Tags.git"
+  },
+  "author": "Joshua Hunsche Jones",
+  "license": "MIT",
+  "homepage": "https://github.com/jhunschejones/Counseling-Book-Tags#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "compression": "^1.7.3",
+    "express": "^4.16.3",
+    "mongoose": "^5.3.2",
+    "newrelic": "^4.9.0"
+  }
+}
