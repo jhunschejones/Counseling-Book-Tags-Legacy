@@ -16,10 +16,13 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 // ====== Set up routes ======
 const apiRoute = require('./routes/book.routes')
 const homeRoute = require('./routes/home.routes')
-app.use('/api/v1', apiRoute)
+const searchRoute = require('./routes/search.routes')
+app.use('/api/v1/book', apiRoute)
+app.use('/api/v1/search', searchRoute)
 app.use('/', homeRoute)
 // app.use(express.static(__dirname + '/views'));
 
-app.listen(3000, () => {
-	console.log('Server is running on port 3000')
+var PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
+	console.log('Server is running on port ' + PORT)
 })

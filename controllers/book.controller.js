@@ -10,7 +10,8 @@ exports.book_create_new_record = function (req, res) {
       title: req.body.title,
       author: req.body.author,
       isbn: req.body.isbn,
-      tags: req.body.tags
+      tags: req.body.tags,
+      comments: req.body.comments
     }
   )
 
