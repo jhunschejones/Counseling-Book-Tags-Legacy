@@ -9,7 +9,10 @@ app.use(compression())
 // ====== Set up database connection ======
 const mongoose = require('mongoose')
 mongoose.set('useFindAndModify', false);
-mongoose.connect('mongodb://danielle:password88@ds027699.mlab.com:27699/counseling-tags', { useNewUrlParser: true })
+// --- Llab database string
+// mongoose.connect('mongodb://danielle:password88@ds027699.mlab.com:27699/counseling-tags', { useNewUrlParser: true })
+// --- mongoDB.Atlas database string
+mongoose.connect('mongodb://user:counseling-tags@cluster1-shard-00-00-elo9z.mongodb.net:27017,cluster1-shard-00-01-elo9z.mongodb.net:27017,cluster1-shard-00-02-elo9z.mongodb.net:27017/counseling-book-tags-database?ssl=true&replicaSet=Cluster1-shard-0&authSource=admin&retryWrites=true', { useNewUrlParser: true })
 let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
