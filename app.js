@@ -20,9 +20,12 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 const apiRoute = require('./routes/book.routes')
 const homeRoute = require('./routes/home.routes')
 const searchRoute = require('./routes/search.routes')
+const describeRoute = require('./routes/describe.routes')
 app.use('/api/v1/book', apiRoute)
 app.use('/api/v1/search', searchRoute)
+app.use('/api/v1', describeRoute)
 app.use('/', homeRoute)
+app.set('json spaces', 2);
 // app.use(express.static(__dirname + '/views'));
 
 var PORT = process.env.PORT || 3000
