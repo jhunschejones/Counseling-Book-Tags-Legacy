@@ -1,1 +1,304 @@
-<h1>Welcome to counseling book tags home view!</h1>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style>
+      body,
+      #user-search-input {
+        background-color: #eaeaea;
+      }
+      #main-nav {
+        background-color: #c0d6df;
+      }
+      #main-nav a,
+      .letter-nav {
+        color: #373f51;
+      }
+      #user-search-input {
+        max-width: 300px;
+        border-color: #373f51;
+        display: inline-flex;
+      }
+      #submit-search {
+        background-color: #373f51;
+        color: white;
+        display: inline-flex;
+        margin-bottom: 4px
+      }
+      #tag-search-form {
+        margin: 0 auto;
+        margin-top: 50px;
+        width: 385px;
+      }
+      #tag-search-results {
+        margin-top: 50px;
+        text-align: left;
+        color: #373f51;
+      }
+      .letter-nav {
+        padding: 8px 5px 8px 5px;
+        max-width: 70px;
+        text-align: center;
+      }
+        .letter-nav:hover {
+          text-decoration: none;
+        }
+      #alphabet {
+        margin-top: 20px;
+      }
+      /* .alphabet-results {
+        display: inline;
+      } */
+      .selected-filter:hover {
+        background-color: #eaeaea;
+        color: #373f51;
+        border-color: #373f51;
+      }
+      .selected-filter {
+        border-color: #373f51;
+      }
+      .tag {
+        display: block;
+        padding: 5px 10px;
+        margin-right: 8px;
+        margin-bottom: 6px;
+        font-size: 0.8em;
+        color: #373f51;
+        background-color: #c0d6df;
+        /* box-shadow: 2px 2px 4px lightgrey; */
+      }
+      /* This overrides bootstrap's style for the text input
+	    box so that it will display the 'x' in chrome */
+	    input[type=search]::-webkit-search-cancel-button {
+		    -webkit-appearance: searchfield-cancel-button;
+	    }
+    </style>
+
+    <title>Counseling Book Tags</title>
+  </head>
+  <body>
+    <!-- Start Navbar -->
+    <nav id="main-nav" class="navbar navbar-expand navbar-light">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link active" href="#">Home</a>
+        <a class="nav-item nav-link active" href="#">Update</a>
+        <a class="nav-item nav-link active" href="#">About</a>
+        <a class="nav-item nav-link active" href="#">Contact</a>
+      </div>
+    </nav>
+    <!-- End Navbar -->
+
+    <!-- Start Tags Content -->
+    <div class="container-fluid">
+      <div id="tag-search-form">
+        <input id="user-search-input" type=search placeholder="Filter tags on page" class="form-control">
+        <input id="submit-search" type=submit class="btn">
+      </div>
+
+      <div class="row">
+        <div class="col-2">
+          <!-- blank column -->
+        </div>
+        <div class="col-8">
+          <div id="tag-search-results">
+            <div id="a-results" class="alphabet-results"></div>
+            <div id="b-results" class="alphabet-results"></div>
+            <div id="c-results" class="alphabet-results"></div>
+            <div id="d-results" class="alphabet-results"></div>
+            <div id="e-results" class="alphabet-results"></div>
+            <div id="f-results" class="alphabet-results"></div>
+            <div id="g-results" class="alphabet-results"></div>
+            <div id="h-results" class="alphabet-results"></div>
+            <div id="i-results" class="alphabet-results"></div>
+            <div id="j-results" class="alphabet-results"></div>
+            <div id="k-results" class="alphabet-results"></div>
+            <div id="l-results" class="alphabet-results"></div>
+            <div id="m-results" class="alphabet-results"></div>
+            <div id="n-results" class="alphabet-results"></div>
+            <div id="o-results" class="alphabet-results"></div>
+            <div id="p-results" class="alphabet-results"></div>
+            <div id="q-results" class="alphabet-results"></div>
+            <div id="r-results" class="alphabet-results"></div>
+            <div id="s-results" class="alphabet-results"></div>
+            <div id="t-results" class="alphabet-results"></div>
+            <div id="u-results" class="alphabet-results"></div>
+            <div id="v-results" class="alphabet-results"></div>
+            <div id="w-results" class="alphabet-results"></div>
+            <div id="x-results" class="alphabet-results"></div>
+            <div id="y-results" class="alphabet-results"></div>
+            <div id="z-results" class="alphabet-results"></div>
+          </div>
+        </div>
+        <div class="col-2">
+          <nav id="alphabet" class="nav flex-column">
+            <a id="books-all-nav" class="letter-nav" href="#">All Tags</a>
+            <a id="books-a-b-nav" class="letter-nav" href="#">A&nbsp;&nbsp;-&nbsp;&nbsp;B</a>
+            <a id="books-c-d-nav" class="letter-nav" href="#">C&nbsp;&nbsp;-&nbsp;&nbsp;D</a>
+            <a id="books-e-f-nav" class="letter-nav" href="#">E&nbsp;&nbsp;-&nbsp;&nbsp;F</a>
+            <a id="books-g-h-nav" class="letter-nav" href="#">G&nbsp;&nbsp;-&nbsp;&nbsp;H</a>
+            <a id="books-i-j-nav" class="letter-nav" href="#">I&nbsp;&nbsp;-&nbsp;&nbsp;J</a>
+            <a id="books-k-l-nav" class="letter-nav" href="#">K&nbsp;&nbsp;-&nbsp;&nbsp;L</a>
+            <a id="books-m-n-nav" class="letter-nav" href="#">M&nbsp;&nbsp;-&nbsp;&nbsp;N</a>
+            <a id="books-o-p-nav" class="letter-nav" href="#">O&nbsp;&nbsp;-&nbsp;&nbsp;P</a>
+            <a id="books-q-r-nav" class="letter-nav" href="#">Q&nbsp;&nbsp;-&nbsp;&nbsp;R</a>
+            <a id="books-s-t-nav" class="letter-nav" href="#">S&nbsp;&nbsp;-&nbsp;&nbsp;T</a>
+            <a id="books-u-v-nav" class="letter-nav" href="#">U&nbsp;&nbsp;-&nbsp;&nbsp;V</a>
+            <a id="books-w-x-nav" class="letter-nav" href="#">W&nbsp;&nbsp;-&nbsp;&nbsp;X</a>
+            <a id="books-y-x-nav" class="letter-nav" href="#">Y&nbsp;&nbsp;-&nbsp;&nbsp;Z</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <!-- End Tags Content -->
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script>
+      function getAllBooks(handleData) {
+        $("#results-for-this-letter").html('')
+        $.ajax({
+          method: "GET",
+          url: "/api/v1/book",
+          success: function(data) {
+            handleData(data)
+          }
+        })
+      }  
+
+      // defining global variables (try to keep this list short Jones)
+      var allBooks
+      var tagElements
+
+      // sets book data returned from database to a variable without making the call synchronous
+      getAllBooks(function(output) {
+        // console.log("getAllBooks called")
+        allBooks = output
+        // warning: populating the page is synchronous after async data call is completed the way it is currently written
+        populateTags()
+        tagElements = document.getElementsByClassName("tag")
+      })
+
+      function populateTags() {
+        // console.log("populateTags called")
+        allBooks.forEach(book => {
+          book.tags.forEach(tagObject => {
+            var tag = tagObject.tag
+            var letter = tag.charAt(0).toLowerCase()
+            $(`#${letter}-results`).append(`<button class="tag badge badge-pill badge-primary" value="${tag}">${tag}</button>`)
+            $(`#${letter}-results`).show()
+            // $('#tag-search-results').append(`<button class="tag badge badge-pill badge-primary" value="${tag}">${tag}</button>`)
+          })
+        })
+        alphabetFilter()
+      }
+
+      function searchFilter() {
+        // console.log("searchFilter called")
+        userInput = document.getElementById("user-search-input").value.toUpperCase()
+        // if you remove all spaces and there is nothing in the input field
+        // then set all buttons to visible. This addresses empty searches and
+        // is used later to display all buttons when the box is blank
+        if (userInput.trim().length == 0){
+          for (var i = 0; i < tagElements.length; i++){
+            tagElements[i].style.display = ""
+          }
+        } else {
+          for (var i = 0; i < tagElements.length; i++) {
+            if (tagElements[i].value.toUpperCase().indexOf(userInput)!= -1) {
+              tagElements[i].style.display = ""
+            } else {
+              tagElements[i].style.display = "none"
+            }
+          }
+        }
+      }
+
+      function alphabetFilter(evt) {
+        // console.log("aphabetFilter called")
+
+        let searchInput = document.getElementById("user-search-input")
+        
+        if (searchInput.value.trim()) { 
+          searchInput.value = ""
+          searchFilter()
+        }
+
+        let letters
+        let defaultLetters = sessionStorage.getItem("alphabetSelection") || ["a", "b"]
+
+        if (evt) { 
+          letters = evt.target.letters 
+          sessionStorage.setItem("alphabetSelection", letters) 
+          toggleSelectedFilter(evt)
+        } else { 
+          letters = defaultLetters 
+          toggleSelectedFilter()
+        } 
+
+        let alphabetResults = document.getElementsByClassName("alphabet-results")
+
+        for (let index = 0; index < alphabetResults.length; index++) {
+          const element = alphabetResults[index]
+          element.style.display = "none"
+          
+          for (let index = 0; index < letters.length; index++) {
+            const letter = letters[index];
+
+            if (element.id.charAt(0) == letter) {
+              element.style.display = ""
+            } 
+          }     
+        }
+      }
+
+      function toggleSelectedFilter(evt) {
+        // console.log("toggleSelectedFilter called")
+        if (evt) {
+          let selected = document.getElementsByClassName("selected-filter")
+          if (selected) {
+            for (let index = 0; index < selected.length; index++) {
+              const element = selected[index];
+              element.classList.remove("selected-filter", "btn", "btn-outline-primary")            
+            }
+          }
+
+          evt.target.classList.add("selected-filter", "btn", "btn-outline-primary")
+        } else {
+          let defaultLetters = sessionStorage.getItem("alphabetSelection") || ["a", "b"]
+          if (defaultLetters.length < 5) {
+            document.getElementById(`books-${defaultLetters[0]}-${defaultLetters[2]}-nav`).classList.add("selected-filter", "btn", "btn-outline-primary")
+          } else {
+            document.getElementById('books-all-nav').classList.add("selected-filter", "btn", "btn-outline-primary")
+          }
+        }
+      }
+
+      // ====== Add event listeners ======
+      document.getElementById("user-search-input").addEventListener("input", searchFilter)
+      let alltags_nav = document.getElementById("books-all-nav")
+      alltags_nav.addEventListener("click", alphabetFilter)
+      alltags_nav.letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+      let ab_nav = document.getElementById("books-a-b-nav")
+      ab_nav.addEventListener("click", alphabetFilter)
+      ab_nav.letters = ["a", "b"]
+      let cd_nav = document.getElementById("books-c-d-nav")
+      cd_nav.addEventListener("click", alphabetFilter)
+      cd_nav.letters = ["c", "d"]
+      let ef_nav = document.getElementById("books-e-f-nav")
+      ef_nav.addEventListener("click", alphabetFilter)
+      ef_nav.letters = ["e", "f"]
+      let gh_nav = document.getElementById("books-g-h-nav")
+      gh_nav.addEventListener("click", alphabetFilter)
+      gh_nav.letters = ["g", "h"]
+      let ij_nav = document.getElementById("books-i-j-nav")
+      ij_nav.addEventListener("click", alphabetFilter)
+      ij_nav.letters = ["i", "j"]
+      let kl_nav = document.getElementById("books-k-l-nav")
+      kl_nav.addEventListener("click", alphabetFilter)
+      kl_nav.letters = ["k", "l"]
+    </script>
+  </body>
+</html>
