@@ -19,6 +19,7 @@ let BookSchema = new Schema({
   cover: {type: String, required: false},
   sameBook: {type: Array, required: false},
   tags: {type: Array, required: false},
+  allTags: {type: Array, required: false},
   comments: {type: Array, required: false},
 })
 

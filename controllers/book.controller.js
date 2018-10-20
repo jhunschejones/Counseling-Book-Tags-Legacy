@@ -26,21 +26,25 @@ function getTitleKeyWords(title) {
   return keyWords
 }
 // ====== takes in author string, returns all-caps array of non duplicate key words ======
-function getAuthorKeyWords(author) {
-  const authorWords = author.split(" ")
+function getAuthorKeyWords(authors) {
   let keyWords = []
-  authorWords.forEach(element => {
-    // trim any spaces off the ends of the word
-    element = element.trim()
-    // capitolize word
-    element = element.toUpperCase()
 
-    // check if word is already in array
-    if (keyWords.indexOf(element) === -1 ) {
-      // add word to keyWords array
-      keyWords.push(element)
-    }
-  })
+  authors.forEach(author => {
+    const authorWords = author.split(" ")
+
+    authorWords.forEach(element => {
+      // trim any spaces off the ends of the word
+      element = element.trim()
+      // capitolize word
+      element = element.toUpperCase()
+  
+      // check if word is already in array
+      if (keyWords.indexOf(element) === -1 ) {
+        // add word to keyWords array
+        keyWords.push(element)
+      }
+    })
+  });
   return keyWords
 }
 
@@ -54,12 +58,24 @@ function safeInput(userInput) {
   }
 }
 
+// ====== Takes in tags-object array and makes an array of just non-duplicated tags ======
+function makeAllTagsArray(tagObjectsArray) {
+  let tagsArray = []
+  tagObjectsArray.forEach(tagObject => {
+    if (tagsArray.indexOf(tagObject.tag) == -1) {
+      tagsArray.push(tagObject.tag)
+    }
+  })
+  return tagsArray
+}
+
 exports.book_create_new_record = function (req, res) {
   if (safeInput(JSON.stringify(req.body))) {
     // checks required fields and handles instead of crashing
     if (req.body.goodreadsBookID && req.body.title && req.body.author && req.body.isbn) {
       let keyWords = getTitleKeyWords(req.body.title)
       let authorWords = getAuthorKeyWords(req.body.author)
+      let all_tags = makeAllTagsArray(req.body.tags)
       
       let book = new Book(
         {
@@ -75,6 +91,7 @@ exports.book_create_new_record = function (req, res) {
           cover: req.body.cover,
           sameBook: req.body.sameBook,
           tags: req.body.tags,
+          allTags: all_tags,
           comments: req.body.comments
         }
       )
@@ -102,7 +119,7 @@ exports.return_all_books = function (req, res) {
   })
 }
 
-exports.book_details = function (req, res) {
+exports.book_details = function (req, res, next) {
   Book.findById(req.params.id, function (err, book) {
     if (err) return next(err)
     if (book) res.send(book)
@@ -122,6 +139,7 @@ exports.book_update = function (req, res, next) {
   }
 }
 
+// TODO no error handling at this endpoint
 exports.book_delete = function (req, res) {
   Book.findByIdAndRemove(req.params.id, function (err) {
     if (err) return next(err)
@@ -165,7 +183,7 @@ exports.find_by_tags = function (req, res) {
     if (selectedTags.indexOf(element) === -1) { selectedTags.push(element) }
   })
 
-  Book.find({ "tags": { $all: selectedTags } }, function (err, results) {
+  Book.find({ "allTags": { $all: selectedTags }}, function (err, results) {
     if (err) { return next(err) }
     if (results.length === 0) { 
       res.status(400).send(`No books in the database with tags: ${JSON.stringify(selectedTags)}`) 

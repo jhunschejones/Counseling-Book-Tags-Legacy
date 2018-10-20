@@ -65,6 +65,7 @@
         margin: 0 auto;
       }
       .tag {
+        cursor: pointer;
         display: block;
         padding: 5px 10px;
         margin-right: 8px;
@@ -260,8 +261,10 @@
       function populateTags() {
         let allTags = []
         allBooks.forEach(book => {
-          book.tags.forEach(tagObject => {
-            allTags.push(tagObject.tag)
+          book.allTags.forEach(tag => {
+            if (allTags.indexOf(tag) == -1) {
+              allTags.push(tag)
+            }
           })
         })
 
@@ -472,7 +475,7 @@
       
       setTimeout(function(){ 
         $(".tag").on("click", function() { window.location.href = "/search?" + $(this).attr("value").replace(/,/g, '%2C') })
-      }, 1500);
+      }, 1200);
     </script>
   </body>
 </html>
