@@ -70,7 +70,10 @@ function makeAllTagsArray(tagObjectsArray) {
 }
 
 exports.book_create_new_record = function (req, res) {
-  if (safeInput(JSON.stringify(req.body))) {
+
+  // description field needs to be able to have html in it, so this security check blocks valid content
+  // if (safeInput(JSON.stringify(req.body))) {
+
     // checks required fields and handles instead of crashing
     if (req.body.goodreadsBookID && req.body.title && req.body.author && req.body.isbn) {
       let keyWords = getTitleKeyWords(req.body.title)
@@ -90,6 +93,7 @@ exports.book_create_new_record = function (req, res) {
           publisher: req.body.publisher,
           cover: req.body.cover,
           sameBook: req.body.sameBook,
+          description: req.body.description,
           tags: req.body.tags,
           allTags: all_tags,
           comments: req.body.comments
@@ -106,10 +110,10 @@ exports.book_create_new_record = function (req, res) {
       // not all required fields were passed with a value
       res.status(500).send('`goodreadsBookID`, `title`, `author`, and `isbn` are required fields')
     }
-  } else {
-    // client sent prohibited characters
-    res.status(500).send('Client payload included prohibited characters.')
-  }
+  // } else {
+  //   // client sent prohibited characters
+  //   res.status(500).send('Client payload included prohibited characters.')
+  // }
 }
 
 exports.return_all_books = function (req, res) {
@@ -128,15 +132,16 @@ exports.book_details = function (req, res, next) {
 }
 
 exports.book_update = function (req, res, next) {
-  if (safeInput(JSON.stringify(req.body))) {
+  // description field needs to be able to have html in it, so this security check blocks valid content
+  // if (safeInput(JSON.stringify(req.body))) {
     Book.findByIdAndUpdate(req.params.id, {$set: req.body}, function (err, book) {
       if (err) return next(err)
       res.send('Book updated successfully!')
       return
     })
-  } else {
-    res.status(500).send('Client payload contains prohibited characters.')
-  }
+  // } else {
+  //   res.status(500).send('Client payload contains prohibited characters.')
+  // }
 }
 
 // TODO no error handling at this endpoint

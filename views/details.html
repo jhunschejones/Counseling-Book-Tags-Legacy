@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style>
+      body {
+        background-color: #eaeaea;
+        color: #373f51;
+      }
+      #main-nav,
+      #main-nav a {
+        background-color: #c0d6df;
+        color: #373f51;
+      }
+      #page-content-label,
+      .warning-text {
+        color: #373f51;
+      }
+      #book-title {
+        color: #373f51;
+        margin-top: 10px;
+        margin-bottom: 0px;
+      }
+      #book-author {
+        margin: 0px 0px 5px 0px;
+      }
+      #book-cover {
+        box-shadow: 5px 5px 10px rgba(128, 128, 128, 0.678);
+      }
+      #book-publication {
+        margin-top: 5px;
+      }
+      .tag {
+        cursor: pointer;
+        display: block;
+        padding: 5px 10px;
+        margin-right: 8px;
+        margin-bottom: 6px;
+        font-size: 0.8em;
+        color: #373f51;
+        background-color: #c0d6df;
+        display: inline-flex;
+        /* box-shadow: 2px 2px 4px lightgrey; */
+      }
+      @media screen and (max-width: 750px) {
+        .hide-small {
+            display: none !important;
+        }
+      }
+      @media screen and (min-width: 751px) {
+
+      }
+    </style>
+
+    <title>Counseling Book Tags</title>
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <nav id="main-nav" class="navbar navbar-expand navbar-light">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link active" href="/">Home</a>
+        <a class="nav-item nav-link active" href="#">Update</a>
+        <a class="nav-item nav-link active" href="#">About</a>
+        <a class="nav-item nav-link active" href="#">Contact</a>
+      </div>
+    </nav>
+    <!-- NAVBAR -->
+
+    <!-- PAGE CONTENT -->
+    <div class="container-fluid">
+      <div class="row no-gutters">
+        <div class="col">
+          <h4 id="book-title"></h4>
+          <h4 id="book-author" class="text-secondary"></h4>
+          <img id="book-cover" src="" alt="Book Cover Image">
+          <p id="book-publication"><span id="publisher"></span><span id="published-year"></span></p>
+          <h5>Description:</h5>
+          <p id="book-description"></p>
+        </div>
+
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Tags:</h5>
+              <p id="book-tags" class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+          </div>
+          <br/>
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Comments:</h5>
+              <p id="book-comments" class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- PAGE CONTENT -->
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script> -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script>
+      // ====== Start Utility Functions ======
+      function truncate(str, len){
+        // set up the substring
+        var subString = str.substr(0, len-1);
+        // add elipse after last complete word and trim trailing comma
+        return (
+          subString.substr(0, subString.lastIndexOf(' '))
+          .replace(/(^[,\s]+)|([,\s]+$)/g, '') + '...'
+        )
+      }
+      // ====== End Utility Functions ======
+
+      // test with book ID 5bca49d74c00306d7db65199
+      var bookData
+      let bookID = window.location.search.replace(/\?/g, '')
+
+      function getBookDetails(handleData) {
+        $("#results-for-this-letter").html('')
+        $.ajax({
+          method: "GET",
+          url: "/api/v1/book/" + bookID,
+          success: function(data) {
+            handleData(data)
+          }
+        })
+      }  
+      // sets book data returned from database to a variable without making the call synchronous
+      // though the asynchronous nature of this script breaks down to synchronous function calls
+      // pretty fast
+      getBookDetails(function(output) {
+        bookData = output
+        
+        if (bookData && bookData.length !== 0) { 
+          poulatePage()
+        } else {
+          // handle no results
+          $('#selected-tags').html('')
+          $('#selected-tags').append(`<br/><p class="warning-text">Oops, looks like we couldn't find a book with that ID! Head back <a href="/">home</a> to try again.</p>`)
+        }
+      })
+
+      function poulatePage() {
+        $('#book-title').text(bookData.title)
+        $('#book-author').html("&nbsp&nbsp-&nbsp;" + bookData.author)
+        $('#book-cover').attr('src', bookData.cover)
+        $('#publisher').text(bookData.publisher)
+        $('#published-year').html("&nbsp;&copy;" + bookData.published)
+        $('#book-description').html(bookData.description)
+        // bookData.tags <-- this is the array of tag objects
+        for (let index = 0; index < bookData.tags.length; index++) {
+          const tag = bookData.tags[index];
+
+          // Here's what needs to be done: the tag object properties need to be named different
+          // tag.tag is not inheritnly understandable such as `tag.title`, `tag.creator` might be
+          // NOTE: a change like this will mean the home page will need to be rewritten a tad
+          // but it might be better to use the allTags array property of each book there anyway
+          let displayTag
+          if (tag.length > 40) { displayTag = truncate(tag, 40) }
+          else { displayTag = tag }
+          
+          $('#book-tags').append(`<button class="tag badge badge-pill" value="${tag}">${displayTag}</button>`)
+        }
+        // bookData.comments <-- this is an array of comment objects
+      }
+      
+      // ====== Add event listeners ======
+
+    </script>
+  </body>
+</html>
