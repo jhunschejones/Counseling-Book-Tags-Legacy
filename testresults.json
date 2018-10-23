@@ -1,0 +1,181 @@
+[
+    {
+        "titleKeyWords": [
+            "HARRY",
+            "POTTER",
+            "SORCERER'S",
+            "STONE",
+            "1"
+        ],
+        "author": [
+            "J.K. Rowling"
+        ],
+        "authorKeyWords": [
+            "J.K.",
+            "ROWLING"
+        ],
+        "sameBook": [],
+        "tagObjects": [
+            {
+                "tag": "A tag",
+                "creator": "Josh"
+            },
+            {
+                "tag": "Another tag",
+                "creator": "Josh"
+            },
+            {
+                "tag": "A third tag",
+                "creator": "Josh"
+            },
+            {
+                "tag": "azulejo",
+                "creator": "Josh"
+            },
+            {
+                "tag": "azotize",
+                "creator": "Josh"
+            },
+            {
+                "tag": "asphyxy",
+                "creator": "Josh"
+            },
+            {
+                "tag": "adjunct",
+                "creator": "Josh"
+            },
+            {
+                "tag": "azimuth",
+                "creator": "Josh"
+            },
+            {
+                "tag": "a very very long tag",
+                "creator": "Josh"
+            },
+            {
+                "tag": "best tag ever",
+                "creator": "Josh"
+            },
+            {
+                "tag": "cool tags!",
+                "creator": "Josh"
+            },
+            {
+                "tag": "Deez tagz r00l!",
+                "creator": "Josh"
+            },
+            {
+                "tag": "How about those tags!",
+                "creator": "Josh"
+            },
+            {
+                "tag": "I like this new tag",
+                "creator": "Josh"
+            },
+            {
+                "tag": "Zee best tag of all!",
+                "creator": "Josh"
+            },
+            {
+                "tag": "Good tags!",
+                "creator": "Josh"
+            },
+            {
+                "tag": "Three",
+                "creator": "Josh"
+            },
+            {
+                "tag": "Two",
+                "creator": "Josh"
+            },
+            {
+                "tag": "One",
+                "creator": "Josh"
+            },
+            {
+                "tag": "This tag is not just long, it's downright silly in it's complexity and length of content.",
+                "creator": "Josh"
+            }
+        ],
+        "tags": [
+            "A tag",
+            "Another tag",
+            "A third tag",
+            "azulejo",
+            "azotize",
+            "asphyxy",
+            "adjunct",
+            "azimuth",
+            "a very very long tag",
+            "best tag ever",
+            "cool tags!",
+            "Deez tagz r00l!",
+            "How about those tags!",
+            "I like this new tag",
+            "Zee best tag of all!",
+            "Good tags!",
+            "Three",
+            "Two",
+            "One",
+            "This tag is not just long, it's downright silly in it's complexity and length of content."
+        ],
+        "comments": [],
+        "_id": "5bca497a4c00306d7db65198",
+        "goodreadsBookID": "3",
+        "title": "Harry Potter and the Sorcerer's Stone (Harry Potter, #1)",
+        "isbn": "0439554934",
+        "__v": 0,
+        "description": "Harry Potter's life is miserable. His parents are dead and he's stuck with his heartless relatives, who force him to live in a tiny closet under the stairs. But his fortune changes when he receives a letter that tells him the truth about himself: he's a wizard. A mysterious visitor rescues him from his relatives and takes him to his new home, Hogwarts School of Witchcraft and Wizardry.<br /><br />After a lifetime of bottling up his magical powers, Harry finally feels like a normal kid. But even within the Wizarding community, he is special. He is the boy who lived: the only person to have ever survived a killing curse inflicted by the evil Lord Voldemort, who launched a brutal takeover of the Wizarding world, only to vanish after failing to kill Harry.<br /><br />Though Harry's first year at Hogwarts is the best of his life, not everything is perfect. There is a dangerous secret object hidden within the castle walls, and Harry believes it's his responsibility to prevent it from falling into evil hands. But doing so will bring him into contact with forces more terrifying than he ever could have imagined.<br /><br />Full of sympathetic characters, wildly imaginative situations, and countless exciting details, the first installment in the series assembles an unforgettable magical world and sets the stage for many high-stakes adventures to come.",
+        "cover": "https://images.gr-assets.com/books/1474154022l/3.jpg",
+        "isbn13": "9780439554930",
+        "published": "1997",
+        "publisher": "Scholastic Inc"
+    },
+    {
+        "titleKeyWords": [
+            "HARRY",
+            "POTTER",
+            "CHAMBER",
+            "SECRETS",
+            "2"
+        ],
+        "author": [
+            "J.K. Rowling"
+        ],
+        "authorKeyWords": [
+            "J.K.",
+            "ROWLING"
+        ],
+        "sameBook": [],
+        "tagObjects": [
+            {
+                "tag": "One",
+                "creator": "Josh"
+            },
+            {
+                "tag": "Two",
+                "creator": "Josh"
+            }
+        ],
+        "tags": [
+            "One",
+            "Two"
+        ],
+        "comments": [
+            {
+                "text": "I thought this really felt more like sequel. Was there another book I missed?",
+                "creator": "Josh"
+            }
+        ],
+        "_id": "5bce79b00105a4657fd03e68",
+        "goodreadsBookID": "15881",
+        "title": "Harry Potter and the Chamber of Secrets (Harry Potter, #2)",
+        "isbn": "0439064864",
+        "isbn13": "9780439064866",
+        "published": "1999",
+        "publisher": "Arthur A. Levine Books / Scholastic Inc.",
+        "cover": "https://images.gr-assets.com/books/1474169725l/15881.jpg",
+        "description": "The Dursleys were so mean and hideous that summer that all Harry Potter wanted was to get back to the Hogwarts School for Witchcraft and Wizardry. But just as he's packing his bags, Harry receives a warning from a strange, impish creature named Dobby who says that if Harry Potter returns to Hogwarts, disaster will strike<br /><br />And strike it does. For in Harry's second year at Hogwarts, fresh torments and horrors arise, including an outrageously stuck-up new professor, Gilderoy Lockhart, a spirit named Moaning Myrtle who haunts the girls' bathroom, and the unwanted attentions of Ron Weasley's younger sister, Ginny.<br /><br />But each of these seem minor annoyances when the real trouble begins, and someone -- or something -- starts turning Hogwarts students to stone. Could it be Draco Malfoy, a more poisonous rival than ever? Could it possibly be Hagrid, whose mysterious past is finally told? Or could it be the one everyone at Hogwarts most suspects . . . Harry Potter himself?<br /><br />--jacket description",
+        "__v": 0
+    }
+]
