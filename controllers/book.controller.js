@@ -71,14 +71,16 @@ function makeAllTagsArray(tagObjectsArray) {
 
 exports.book_create_new_record = function (req, res) {
 
-  // description field needs to be able to have html in it, so this security check blocks valid content
-  // if (safeInput(JSON.stringify(req.body))) {
+  // description field needs to be able to have html in it
+  if (safeInput(JSON.stringify(req.body.title)) && safeInput(JSON.stringify(req.body.author)) && safeInput(JSON.stringify(req.body.isbn)) && safeInput(JSON.stringify(req.body.published)) && safeInput(JSON.stringify(req.body.publisher)) && safeInput(JSON.stringify(req.body.cover)) && safeInput(JSON.stringify(req.body.sameBook)) && safeInput(JSON.stringify(req.body.tagObjects)) && safeInput(JSON.stringify(req.body.tags)) && safeInput(JSON.stringify(req.body.comments))) {
 
     // checks required fields and handles instead of crashing
-    if (req.body.goodreadsBookID && req.body.title && req.body.author && req.body.isbn) {
+    if (req.body.goodreadsBookID && req.body.title && req.body.author && req.body.isbn && req.body.published && req.body.publisher && req.body.cover) {
       let keyWords = getTitleKeyWords(req.body.title)
       let authorWords = getAuthorKeyWords(req.body.author)
-      let all_tags = makeAllTagsArray(req.body.tags)
+      // let tags_array
+      // if (req.body.tagObjects) { tags_array = makeAllTagsArray(req.body.tagObjects) }
+      // else { tags_array = [] }
       
       let book = new Book(
         {
@@ -94,8 +96,8 @@ exports.book_create_new_record = function (req, res) {
           cover: req.body.cover,
           sameBook: req.body.sameBook,
           description: req.body.description,
+          tagObjects: req.body.tagObjects,
           tags: req.body.tags,
-          allTags: all_tags,
           comments: req.body.comments
         }
       )
@@ -108,12 +110,12 @@ exports.book_create_new_record = function (req, res) {
       })
     } else {
       // not all required fields were passed with a value
-      res.status(500).send('`goodreadsBookID`, `title`, `author`, and `isbn` are required fields')
+      res.status(500).send('`goodreadsBookID`, `title`, `author`, `isbn`, `published`, `publisher`, and `cover` are all required fields')
     }
-  // } else {
-  //   // client sent prohibited characters
-  //   res.status(500).send('Client payload included prohibited characters.')
-  // }
+  } else {
+    // client sent prohibited characters
+    res.status(500).send('Client payload included prohibited characters.')
+  }
 }
 
 exports.return_all_books = function (req, res) {
@@ -126,29 +128,37 @@ exports.return_all_books = function (req, res) {
 exports.book_details = function (req, res, next) {
   Book.findById(req.params.id, function (err, book) {
     if (err) return next(err)
-    if (book) res.send(book)
+    if (book) res.status(200).send(book)
     else res.status(404).send(`Book ID '${req.params.id}' does not exist in the database. NOTE: The required ID value is for the database '_id' field, not the Goodreads 'bookid' field.`)
   })
 }
 
 exports.book_update = function (req, res, next) {
-  // description field needs to be able to have html in it, so this security check blocks valid content
-  // if (safeInput(JSON.stringify(req.body))) {
-    Book.findByIdAndUpdate(req.params.id, {$set: req.body}, function (err, book) {
+  // Only the description field needs to be able to have html in it
+  if (safeInput(JSON.stringify(req.body))) {
+    // limiting the fields that can be updated via the API to: tagObjects, tags, and comments
+    let updateObject = {}
+    if (req.body.tagObjects) { updateObject.tagObjects = req.body.tagObjects }
+    if (req.body.tags) { updateObject.tags = req.body.tags }
+    if (req.body.comments) { updateObject.comments = req.body.comments }
+    
+    Book.findByIdAndUpdate(req.params.id, {$set: updateObject}, function (err, book) {
       if (err) return next(err)
       res.send('Book updated successfully!')
       return
     })
-  // } else {
-  //   res.status(500).send('Client payload contains prohibited characters.')
-  // }
+  } else {
+    res.status(500).send('Client payload contains prohibited characters.')
+  }
 }
 
-// TODO no error handling at this endpoint
 exports.book_delete = function (req, res) {
-  Book.findByIdAndRemove(req.params.id, function (err) {
+  Book.findByIdAndRemove(req.params.id, function (err, deletedBook) {
     if (err) return next(err)
-    res.send('Book deleted successfully!')
+    
+    // confirming deletion was successful
+    if (deletedBook) { res.send('Book deleted successfully!') }
+    else { res.status(500).send(`Book ID '${req.params.id}' does not exist in the database. NOTE: The required ID value is for the database '_id' field, not the Goodreads 'bookid' field.`) }
   })
 }
 
@@ -188,7 +198,7 @@ exports.find_by_tags = function (req, res) {
     if (selectedTags.indexOf(element) === -1) { selectedTags.push(element) }
   })
 
-  Book.find({ "allTags": { $all: selectedTags }}, function (err, results) {
+  Book.find({ "tags": { $all: selectedTags }}, function (err, results) {
     if (err) { return next(err) }
     if (results.length === 0) { 
       res.status(400).send(`No books in the database with tags: ${JSON.stringify(selectedTags)}`) 

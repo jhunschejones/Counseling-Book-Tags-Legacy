@@ -189,8 +189,9 @@
           // Data I am going to use to populate the page:
           let author = book.author[0]
           let title = book.title
+          let bookID = book._id
           let tagPile = ""
-          book.allTags.forEach(tag => {
+          book.tags.forEach(tag => {
             let shortTag
             if (tag && tag.length > 40) { 
               shortTag = truncate(tag, 40) 
@@ -199,15 +200,11 @@
             }
             tagPile = tagPile + `<button class="tag badge badge-pill" value="${tag}" style="display:inline;">${shortTag}</button>`
           })
-          // book.allTags <-- this is an array of tags
-          // book.goodreadsBookID <-- will use this to send to book details page
 
-          $('#matching-books').append(`<hr/><div class="row no-gutters"><div class="col"><a href="#" class="book-info" style="display:inline;">${title} - ${author}</a></div><div class="col">${tagPile}</div></div>`)
+          $('#matching-books').append(`<hr/><div class="row no-gutters"><div class="col"><a href="/details?${bookID}" class="book-info" style="display:inline;">${title} - ${author}</a></div><div class="col">${tagPile}</div></div>`)
         })
-      }
-      
-      // ====== Add event listeners ======
-      setTimeout(function(){ 
+
+        // ====== Add event listeners ======
         $(".tag").on("click", function() { 
           let clickedTag = $(this).attr("value")
           if (searchedTags.indexOf(clickedTag) == -1) {
@@ -227,7 +224,7 @@
           searchedTags.join(',')
           window.location.href = "/search?" + searchedTags
         })
-      }, 1200);
+      }
     </script>
   </body>
 </html>

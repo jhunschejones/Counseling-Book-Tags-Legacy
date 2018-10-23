@@ -35,7 +35,7 @@ router.get('/title/:title', function(req, res) {
             let element = works[index];
 
             let bookSearchObject = {
-              "bookid" : element.best_book[0].id[0]._,
+              "goodreadsBookID" : element.best_book[0].id[0]._,
               "title" : element.best_book[0].title[0],
               "author" : element.best_book[0].author[0].name[0],
               "published" : element.original_publication_year[0]._,
@@ -90,7 +90,7 @@ router.get('/author/:author', function(req, res) {
             let element = works[index];
 
             let bookSearchObject = {
-              "bookid" : element.best_book[0].id[0]._,
+              "goodreadsBookID" : element.best_book[0].id[0]._,
               "title" : element.best_book[0].title[0],
               "author" : element.best_book[0].author[0].name[0],
               "published" : element.original_publication_year[0]._,
@@ -138,7 +138,7 @@ router.get('/isbn/:isbn', function(req, res) {
             let element = works[index];
 
             let bookSearchObject = {
-              "bookid" : element.best_book[0].id[0]._,
+              "goodreadsBookID" : element.best_book[0].id[0]._,
               "title" : element.best_book[0].title[0],
               "author" : element.best_book[0].author[0].name[0],
               "published" : element.original_publication_year[0]._,
@@ -176,19 +176,19 @@ router.get('/details/:bookid', function(req, res) {
       } else { 
         xml2js.parseString(getBody, function (err, result) {
           const book = result.GoodreadsResponse.book[0]
-          let writers = []
+          let authors = []
 
-          const authors = book.authors[0].author
-          for (let index = 0; index < authors.length; index++) {
-            const author = authors[index]
-
-            if (author.role[0] == "") { writers.push(author.name[0]) }
+          const contributors = book.authors[0].author
+          for (let index = 0; index < contributors.length; index++) {
+            const contributor = contributors[index]
+            // making sure to only return authors, not other kinds of contributors
+            if (contributor.role[0] == "") { authors.push(contributor.name[0]) }
           }
           
           let returnObject = {
-            "id" : book.id[0],
+            "goodreadsBookID" : book.id[0],
             "title" : book.title[0],
-            "author(s)" : writers,
+            "author" : authors,
             "isbn" : book.isbn[0],
             "isbn13" : book.isbn13[0],
             "published" : book.publication_year[0],
@@ -203,7 +203,7 @@ router.get('/details/:bookid', function(req, res) {
       }  
     })
   } else {
-    res.status(500).send({"error": "bookid value must be a valid Goodreads book_id"})
+    res.status(500).send({"error": "searched value must be a valid Goodreads book_id"})
   }
 })  
 
