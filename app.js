@@ -26,7 +26,8 @@ app.use('/api/v1/search', searchRoute)
 app.use('/api/v1', describeRoute)
 app.use('/', homeRoute)
 app.set('json spaces', 2);
-// app.use(express.static(__dirname + '/views'));
+// ====== Serve up public folder resources ======
+app.use('/public', express.static(__dirname + '/public'));
 
 var PORT = process.env.PORT || 3000
 app.listen(PORT, () => {

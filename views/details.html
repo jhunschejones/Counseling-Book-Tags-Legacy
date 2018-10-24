@@ -44,6 +44,29 @@
         display: inline-flex;
         /* box-shadow: 2px 2px 4px lightgrey; */
       }
+      #up-arrow img,
+      #down-arrow img {
+        width: 22px;
+        opacity: 0.3;
+        cursor: pointer;
+        padding: 2px 0px;
+      }
+      #up-arrow, 
+      #down-arrow {
+        margin-left: 10px;
+      }
+      #book-description,
+      #up-arrow {
+        display: none;
+      }
+      #comments-card,
+      #tags-card {
+        background-color: #eaeaea;
+      }
+      #comments-card .card-body,
+      #tags-card .card-body {
+        padding: 10px 15px;;
+      }
       @media screen and (max-width: 750px) {
         .hide-small {
             display: none !important;
@@ -76,24 +99,26 @@
           <h4 id="book-author" class="text-secondary"></h4>
           <img id="book-cover" src="" alt="Book Cover Image">
           <p id="book-publication"><span id="publisher"></span><span id="published-year"></span></p>
-          <h5>Description:</h5>
+          <h5>Description:<span id="up-arrow"><img src="./public/images/up_arrow.png" alt="Up Arrow"></span><span id="down-arrow"><img src="./public/images/down_arrow.png" alt="Down Arrow"></span></h5>
           <p id="book-description"></p>
         </div>
 
         <div class="col">
-          <div class="card">
+          <br/>
+          <div id="tags-card" class="card">
             <div class="card-body">
               <h5 class="card-title">Tags:</h5>
-              <p id="book-tags" class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <p id="book-tags" class="card-text"></p>
             </div>
           </div>
           <br/>
-          <div class="card">
+          <div id="comments-card" class="card">
             <div class="card-body">
               <h5 class="card-title">Comments:</h5>
-              <p id="book-comments" class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <p id="book-comments" class="card-text"></p>
             </div>
           </div>
+          <br/>
         </div>
       </div>
     </div>
@@ -113,12 +138,33 @@
           .replace(/(^[,\s]+)|([,\s]+$)/g, '') + '...'
         )
       }
+
+      function toggleContentAndArrows(content, up, down) {
+        let query = $(`#${content}`); 
+        let downArrow = $(`#${down}`); 
+        let upArrow = $(`#${up}`); 
+
+        // check if element is Visible
+        var isVisible = query.is(':visible');
+    
+        if (isVisible === true) {
+          // element was Visible
+          query.hide()
+          downArrow.show()
+          upArrow.hide()
+        } else {
+          // element was Hidden
+          query.show()
+          downArrow.hide()
+          upArrow.show()
+        }
+      }
       // ====== End Utility Functions ======
-
-      // test with book ID 5bca49d74c00306d7db65199
       var bookData
-      let bookID = window.location.search.replace(/\?/g, '')
+      const bookID = window.location.search.replace(/\?/g, '')
 
+      // setting a function as the input parameter to use laster 
+      // when handling the returned data
       function getBookDetails(handleData) {
         $("#results-for-this-letter").html('')
         $.ajax({
@@ -126,21 +172,22 @@
           url: "/api/v1/book/" + bookID,
           success: function(data) {
             handleData(data)
+          },
+          error: function() {
+            $('.container-fluid').html('')
+            $('.container-fluid').append(`<br/><br/><br/><p style="text-align:center;">Oops, looks like we couldn't find a book with that ID! Head back <a href="/">home</a> to try again.</p>`)
           }
         })
       }  
-      // sets book data returned from database to a variable without making the call synchronous
-      // though the asynchronous nature of this script breaks down to synchronous function calls
-      // pretty fast
+
       getBookDetails(function(output) {
-        bookData = output
-        
-        if (bookData && bookData.length !== 0) { 
+        if (output) {
+          bookData = output
           poulatePage()
         } else {
-          // handle no results
-          $('#selected-tags').html('')
-          $('#selected-tags').append(`<br/><p class="warning-text">Oops, looks like we couldn't find a book with that ID! Head back <a href="/">home</a> to try again.</p>`)
+          // handle successful respons with no results
+          $('.container-fluid').html('')
+          $('.container-fluid').append(`<br/><br/><br/><p style="text-align:center;">Oops, looks like we couldn't find a book with that ID! Head back <a href="/">home</a> to try again.</p>`)
         }
       })
 
@@ -151,25 +198,38 @@
         $('#publisher').text(bookData.publisher)
         $('#published-year').html("&nbsp;&copy;" + bookData.published)
         $('#book-description').html(bookData.description)
-        // bookData.tags <-- this is the array of tag objects
-        for (let index = 0; index < bookData.tags.length; index++) {
-          const tag = bookData.tags[index];
 
-          // Here's what needs to be done: the tag object properties need to be named different
-          // tag.tag is not inheritnly understandable such as `tag.title`, `tag.creator` might be
-          // NOTE: a change like this will mean the home page will need to be rewritten a tad
-          // but it might be better to use the allTags array property of each book there anyway
-          let displayTag
-          if (tag.length > 40) { displayTag = truncate(tag, 40) }
-          else { displayTag = tag }
-          
-          $('#book-tags').append(`<button class="tag badge badge-pill" value="${tag}">${displayTag}</button>`)
+        if (bookData.tagObjects.length > 0) {
+          for (let index = 0; index < bookData.tagObjects.length; index++) {
+            const tagObject = bookData.tagObjects[index];
+
+            let displayTag
+            if (tagObject.tag.length > 40) { displayTag = truncate(tagObject.tag, 40) }
+            else { displayTag = tagObject.tag }
+            
+            $('#book-tags').append(`<button class="tag badge badge-pill" data-tag-creator="${tagObject.creator}" value="${tagObject.tag}">${displayTag}</button>`)
+          }
+        } else {
+          $('#book-tags').html('<span class="text-secondary">There are no tags yet for this book.</span>')
         }
-        // bookData.comments <-- this is an array of comment objects
-      }
-      
-      // ====== Add event listeners ======
 
+        if (bookData.comments.length > 0) {
+          bookData.comments.forEach(comment => {
+            $('#book-comments').append(`<span class="comment" data-comment-creator="${comment.creator}">${comment.text}</span>`)
+          })
+        } else {
+          $('#book-comments').html('<span class="text-secondary">There are no comments yet for this book.</span>')
+        }
+
+        // ====== Add event listeners ======
+        document.getElementById("up-arrow").addEventListener("click", function(){
+          toggleContentAndArrows('book-description', 'up-arrow', 'down-arrow')
+        })
+        document.getElementById("down-arrow").addEventListener("click", function(){
+          toggleContentAndArrows('book-description', 'up-arrow', 'down-arrow')
+        })
+        $(".tag").on("click", function() { window.location.href = "/search?" + $(this).attr("value").replace(/,/g, '%2C') })
+      }
     </script>
   </body>
 </html>
