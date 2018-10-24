@@ -288,7 +288,7 @@
 
         // ====== Add event listener to each tag ======
         // calling here so all tags are on the page before it is called
-        $(".tag").on("click", function() { window.location.href = "/search?" + $(this).attr("value").replace(/,/g, '%2C') })
+        $(".tag").on("click", function() { window.location.href = "/results?" + $(this).attr("value").replace(/,/g, '%2C') })
       }
 
       function searchFilter() {

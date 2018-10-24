@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style>
+      body {
+        background-color: #eaeaea;
+      }
+      #main-nav,
+      #main-nav a {
+        background-color: #c0d6df;
+        color: #373f51;
+      }
+      #page-content-label,
+      .warning-text {
+        color: #373f51;
+      }
+      #page-content-label {
+        margin-top: 15px;
+      }
+      .tag,
+      .static-tag {
+        cursor: pointer;
+        display: block;
+        padding: 5px 10px;
+        margin-right: 8px;
+        margin-bottom: 6px;
+        font-size: 0.8em;
+        color: #373f51;
+        background-color: #c0d6df;
+        display: inline-flex;
+        /* box-shadow: 2px 2px 4px lightgrey; */
+      }
+      .static-tag {
+        cursor: default;
+      }
+      .selected-tag {
+        display: inline-flex;
+        padding: 6px 11px;
+        margin-right: 8px;
+        margin-bottom: 6px;
+        font-size: 0.8em;
+        color: #373f51;
+      }
+      #matching-books {
+        max-height: 72vh;
+        overflow-y: scroll;
+      }
+      .book-info,
+      .book-info:hover {
+        text-decoration: none;
+        color: #373f51;
+        margin-right: 10px;
+      }
+      .delete-button {
+        opacity: 0.3;
+        cursor: pointer;
+        margin-left: 9px;
+      }
+      @media screen and (max-width: 750px) {
+        .hide-small {
+            display: none !important;
+        }
+      }
+      @media screen and (min-width: 751px) {
+
+      }
+    </style>
+
+    <title>Counseling Book Tags</title>
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <nav id="main-nav" class="navbar navbar-expand navbar-light">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link active" href="/">Home</a>
+        <a class="nav-item nav-link active" href="#">Update</a>
+        <a class="nav-item nav-link active" href="#">About</a>
+        <a class="nav-item nav-link active" href="#">Contact</a>
+      </div>
+    </nav>
+    <!-- NAVBAR -->
+
+      <!-- HEADER CONTENT -->
+    <div class="container-fluid">
+      <div class="row hide-small" style="margin-top:20px;"></div>
+      <div class="row justify-content-center">
+        <h2 id="page-content-label">Results By Tag</h2>
+      </div>
+      <div class="row justify-content-center">
+        <div id="selected-tags"></div>
+      </div>
+      <!-- HEADER CONTENT -->
+
+      <!-- PAGE CONTENT -->
+      <div class="row">
+        <div class="col-sm-1"></div>
+        <div id="matching-books" class="col">
+          <!-- This is where the book results go -->
+        </div>
+        <div class="col-sm-1"></div>
+      </div>
+    </div>
+      <!-- PAGE CONTENT -->
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script> -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script>
+      // to search a tag, navigate to `/search?TAG1,TAG2,TAG3` passing in tag names seperated by commas
+      // this variable will retrieve them to store as an array
+      var searchedTags = []
+      var bookData
+      function truncate(str, len){
+        // set up the substring
+        var subString = str.substr(0, len-1);
+        
+        return (
+          // add elipse after last complete word
+          subString.substr(0, subString.lastIndexOf(' '))
+          // trim trailing comma
+          .replace(/(^[,\s]+)|([,\s]+$)/g, '') + '...'
+        )
+      }
+
+      window.location.search.replace(/\?/g, '').replace(/\%20/g, ' ').replace(/\%27/g, "'").split(',').forEach(element => {
+        searchedTags.push(element.replace(/\%2C/g, ','))
+      })
+
+      function getAllBooks(handleData) {
+        $("#results-for-this-letter").html('')
+        $.ajax({
+          method: "GET",
+          url: "/api/v1/book/tags/" + searchedTags,
+          success: function(data) {
+            handleData(data)
+          },
+          error: function(error) {
+            // still calling handle data if no data is returned
+            handleData()
+          }
+        })
+      }  
+      // sets book data returned from database to a variable without making the call synchronous
+      // though the asynchronous nature of this script breaks down to synchronous function calls
+      // pretty fast
+      getAllBooks(function(output) {
+        bookData = output || []
+        
+        if (bookData && bookData.length !== 0) { 
+          poulatePage()
+        } else {
+          // handle no results
+          $('#selected-tags').html('')
+          $('#selected-tags').append(`<br/><p class="warning-text">Oops, looks like you didn't select any tags to search by. Head back <a href="/">home</a> to try again!</p>`)
+        }
+      })
+
+      function poulatePage() {
+
+        // ====== Put main search tag on page ======
+        let displayTag
+        if (searchedTags[0] && searchedTags[0].length > 40) { 
+          displayTag = truncate(searchedTags[0], 40) 
+        } else {
+          displayTag = searchedTags[0]
+        }
+        $('#selected-tags').html('')
+        $('#selected-tags').append(`<button class="static-tag badge badge-pill" value="${searchedTags[0]}">${displayTag}</button>`)
+
+        // ====== Put any secondary search tags on page ======
+        for (let index = 1; index < searchedTags.length; index++) {
+          const tag = searchedTags[index];
+          let shortTag
+          if (tag && tag.length > 40) { 
+            shortTag = truncate(tag, 40) 
+          } else {
+            shortTag = tag
+          }
+          $('#selected-tags').append(`<button class="badge selected-tag badge-pill badge-light" value="${tag}">${shortTag}<span class="delete-button" data-tag="${tag}">&#10005;</span></button>`)
+        }
+
+        // ====== Put book results on page ======
+        // console.log(bookData)
+        $('#matching-books').html('')
+        bookData.forEach(book => {
+          // Data I am going to use to populate the page:
+          let author = book.author[0]
+          let title = book.title
+          let bookID = book._id
+          let tagPile = ""
+          book.tags.forEach(tag => {
+            let shortTag
+            if (tag && tag.length > 40) { 
+              shortTag = truncate(tag, 40) 
+            } else {
+              shortTag = tag
+            }
+            tagPile = tagPile + `<button class="tag badge badge-pill" value="${tag}" style="display:inline;">${shortTag}</button>`
+          })
+
+          $('#matching-books').append(`<hr/><div class="row no-gutters"><div class="col"><a href="/details?${bookID}" class="book-info" style="display:inline;">${title} - ${author}</a></div><div class="col">${tagPile}</div></div>`)
+        })
+
+        // ====== Add event listeners ======
+        $(".tag").on("click", function() { 
+          let clickedTag = $(this).attr("value")
+          if (searchedTags.indexOf(clickedTag) == -1) {
+            window.location.href = window.location.href.replace(/\#/g, '') + "," + clickedTag.replace(/,/g, '%2C') 
+          } else {
+            alert(`You already selected the "${clickedTag}" tag!`)
+          }
+        })
+
+        $(".delete-button").on("click", function() { 
+          let clickedTag = $(this).attr("data-tag")
+          let index = searchedTags.indexOf(clickedTag)
+          searchedTags = searchedTags.splice(0, index)
+          for (let index = 0; index < searchedTags.length; index++) {
+            searchedTags[index] = searchedTags[index].replace(/,/g, '%2C')
+          }
+          searchedTags.join(',')
+          window.location.href = "/search?" + searchedTags
+        })
+      }
+    </script>
+  </body>
+</html>
