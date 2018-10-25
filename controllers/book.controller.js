@@ -15,7 +15,7 @@ function getTitleKeyWords(title) {
     element = element.toUpperCase()
 
     // check if word is uninmportant
-    if (unimportant.indexOf(element) === -1 ) {
+    if (unimportant.indexOf(element) === -1 && element != '' ) {
       // check if word is already in array
       if (keyWords.indexOf(element) === -1 ) {
         // add word to keyWords array
@@ -29,9 +29,28 @@ function getTitleKeyWords(title) {
 function getAuthorKeyWords(authors) {
   let keyWords = []
 
-  authors.forEach(author => {
-    const authorWords = author.split(" ")
-
+  // fires if input value is an array i.e. when adding a new book
+  if (Array.isArray(authors)) {
+    authors.forEach(author => {
+      const authorWords = author.split(" ")
+  
+      authorWords.forEach(element => {
+        // trim any spaces off the ends of the word
+        element = element.trim()
+        // capitolize word
+        element = element.toUpperCase()
+    
+        // check if word is already in array
+        if (keyWords.indexOf(element) === -1 && element != '' ) {
+          // add word to keyWords array
+          keyWords.push(element)
+        }
+      })
+    })
+  } else {
+    // fires if input value is just a string
+    const authorWords = authors.split(" ")
+  
     authorWords.forEach(element => {
       // trim any spaces off the ends of the word
       element = element.trim()
@@ -39,12 +58,12 @@ function getAuthorKeyWords(authors) {
       element = element.toUpperCase()
   
       // check if word is already in array
-      if (keyWords.indexOf(element) === -1 ) {
+      if (keyWords.indexOf(element) === -1 && element != '' ) {
         // add word to keyWords array
         keyWords.push(element)
       }
     })
-  });
+  }
   return keyWords
 }
 
@@ -102,11 +121,12 @@ exports.book_create_new_record = function (req, res) {
         }
       )
 
-      book.save(function(err) {
+      book.save(function(err, book) {
         if (err) {
           return next(err)
         }
-        res.send('Book record created successfully!')
+        // res.send('Book record created successfully!')
+        res.send(book._id)
       })
     } else {
       // not all required fields were passed with a value
@@ -169,7 +189,8 @@ exports.find_by_title = function (req, res) {
   Book.find({ "titleKeyWords": { $all: keyWords } }, function (err, results) {
     if (err) { return next(err) }
     if (results.length === 0) { 
-      res.status(400).send(`No book in the database with title: ${req.params.title}`) 
+      // res.status(400).send(`No book in the database with title: ${req.params.title}`) 
+      res.send({"message" : `No book in the database with title: ${req.params.title}`}) 
       return
     }
     res.send(results)
@@ -182,7 +203,8 @@ exports.find_by_author = function (req, res) {
   Book.find({ "authorKeyWords": { $all: authorWords } }, function (err, results) {
     if (err) { return next(err) }
     if (results.length === 0) { 
-      res.status(400).send(`No book in the database with author: ${req.params.author}`) 
+      // res.status(400).send(`No book in the database with author: ${req.params.author}`) 
+      res.send({"message" : `No book in the database with author: ${req.params.author}`}) 
       return
     }
     res.send(results)
@@ -216,7 +238,8 @@ exports.find_by_isbn = function (req, res) {
     Book.find({ "isbn": isbn }, function (err, book) {
       if (err) { return next(err) }
       if (book.length === 0) { 
-        res.status(400).send(`No books in the database with isbn: ${isbn}`) 
+        // res.status(404).send(`No books in the database with isbn: ${isbn}`) 
+        res.send({"message" : `No books in the database with isbn: ${isbn}`}) 
         return
       }
       res.send(book)
@@ -227,7 +250,8 @@ exports.find_by_isbn = function (req, res) {
     Book.find({ "isbn13": isbn }, function (err, book) {
       if (err) { return next(err) }
       if (book.length === 0) { 
-        res.status(400).send(`No books in the database with isbn: ${isbn}`) 
+        // res.status(404).send(`No books in the database with isbn: ${isbn}`) 
+        res.send({"message" : `No books in the database with isbn: ${isbn}`}) 
         return
       }
       res.send(book)
