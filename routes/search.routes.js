@@ -6,7 +6,7 @@ const router = express.Router()
 // ====== search all books by title ======
 router.get('/title/:title', function(req, res) {
   const title = req.params.title
-  // if page is not set, or not a number, set it to 1
+  // if page is not set `?page=`, or not a number, set it to 1
   const page = parseInt(req.query.page) || 1
 
   request.get(  
@@ -115,10 +115,10 @@ router.get('/author/:author', function(req, res) {
 
 // ====== search all books by isbn or isbn13 ======
 router.get('/isbn/:isbn', function(req, res) {
-  const isbn = parseInt(req.params.isbn)
+  const isbn = req.params.isbn
 
   // isbn will have a value of null if it is not a number value  
-  if (isbn) {
+  if (parseInt(isbn)) {
     request.get(  
     {  
       url: `https://www.goodreads.com/search/index.xml?key=6TVJIoGvRqax9atpBsJFPw&q=${isbn}&search[field]=isbn`
@@ -144,10 +144,8 @@ router.get('/isbn/:isbn', function(req, res) {
               "published" : element.original_publication_year[0]._,
               "cover" : element.best_book[0].image_url[0].replace(/m\//g, 'l/').replace(/col\//g, 'com/')
             }
-
               returnArray.push(bookSearchObject)
           }
-
           res.send(returnArray)
           return
         })

@@ -22,8 +22,9 @@
       }
       .tag,
       .static-tag {
+        /* border: 1px outset #c0d6df; */
         cursor: pointer;
-        display: block;
+        display: default;
         padding: 5px 10px;
         margin-right: 8px;
         margin-bottom: 6px;
@@ -31,10 +32,10 @@
         color: #373f51;
         background-color: #c0d6df;
         display: inline-flex;
+        border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
+        border-style: solid;
+        border-width: 1px;
         /* box-shadow: 2px 2px 4px lightgrey; */
-      }
-      .static-tag {
-        cursor: default;
       }
       .selected-tag {
         display: inline-flex;
@@ -43,6 +44,10 @@
         margin-bottom: 6px;
         font-size: 0.8em;
         color: #373f51;
+        /* box-shadow: 2px 2px 4px lightgrey; */
+        border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
+        border-style: solid;
+        border-width: 1px;
       }
       #matching-books {
         max-height: 72vh;
@@ -76,7 +81,7 @@
     <nav id="main-nav" class="navbar navbar-expand navbar-light">
       <div class="navbar-nav">
         <a class="nav-item nav-link active" href="/">Home</a>
-        <a class="nav-item nav-link active" href="#">Update</a>
+        <a class="nav-item nav-link active" href="/search">Update</a>
         <a class="nav-item nav-link active" href="#">About</a>
         <a class="nav-item nav-link active" href="#">Contact</a>
       </div>
@@ -168,7 +173,7 @@
           displayTag = searchedTags[0]
         }
         $('#selected-tags').html('')
-        $('#selected-tags').append(`<button class="static-tag badge badge-pill" value="${searchedTags[0]}">${displayTag}</button>`)
+        $('#selected-tags').append(`<a class="static-tag badge badge-pill" value="${searchedTags[0]}">${displayTag}</a>`)
 
         // ====== Put any secondary search tags on page ======
         for (let index = 1; index < searchedTags.length; index++) {
@@ -179,7 +184,7 @@
           } else {
             shortTag = tag
           }
-          $('#selected-tags').append(`<button class="badge selected-tag badge-pill badge-light" value="${tag}">${shortTag}<span class="delete-button" data-tag="${tag}">&#10005;</span></button>`)
+          $('#selected-tags').append(`<a class="badge selected-tag badge-pill badge-light" value="${tag}">${shortTag}<span class="delete-button" data-tag="${tag}">&#10005;</span></a>`)
         }
 
         // ====== Put book results on page ======
@@ -222,7 +227,7 @@
             searchedTags[index] = searchedTags[index].replace(/,/g, '%2C')
           }
           searchedTags.join(',')
-          window.location.href = "/search?" + searchedTags
+          window.location.href = "/results?" + searchedTags
         })
       }
     </script>
