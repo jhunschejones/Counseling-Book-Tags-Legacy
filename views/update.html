@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style>
+      body {
+        background-color: #eaeaea;
+        color: #373f51;
+      }
+      #main-nav,
+      #main-nav a {
+        background-color: #c0d6df;
+        color: #373f51;
+      }
+      #page-content-label,
+      .warning-text {
+        color: #373f51;
+      }
+      #book-title {
+        color: #373f51;
+        margin-top: 10px;
+        margin-bottom: 0px;
+      }
+      #book-author {
+        margin: 0px 0px 5px 0px;
+      }
+      #book-cover {
+        box-shadow: 5px 5px 10px rgba(128, 128, 128, 0.678);
+      }
+      #book-publication {
+        margin-top: 5px;
+      }
+      .tag {
+        cursor: pointer;
+        display: block;
+        padding: 5px 10px;
+        margin-right: 8px;
+        margin-bottom: 6px;
+        font-size: 0.8em;
+        color: #373f51;
+        background-color: #c0d6df;
+        display: inline-flex;
+        border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
+        border-style: solid;
+        border-width: 1px;
+        /* box-shadow: 2px 2px 4px lightgrey; */
+      }
+      .selected-tag {
+        display: inline-flex;
+        padding: 6px 11px;
+        margin-right: 8px;
+        margin-bottom: 6px;
+        font-size: 0.8em;
+        color: #373f51;
+        /* box-shadow: 2px 2px 4px lightgrey; */
+        border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
+        border-style: solid;
+        border-width: 1px;
+      }
+      .tag-clicker {
+        cursor: pointer;
+      }
+      #up-arrow img,
+      #down-arrow img {
+        width: 22px;
+        opacity: 0.3;
+        cursor: pointer;
+        padding: 2px 0px;
+      }
+      #up-arrow, 
+      #down-arrow {
+        margin-left: 10px;
+      }
+      #book-description,
+      #up-arrow {
+        display: none;
+      }
+      #logged-in-content {
+        display: none;
+      }
+      #logged-out-message {
+        display: none;
+        text-align: center;
+      }
+      #log-in-button {
+        cursor: pointer;
+      }
+      #comments-card,
+      #tags-card {
+        background-color: #eaeaea;
+      }
+      #comments-card .card-body,
+      #tags-card .card-body {
+        padding: 5px 15px 10px 15px;
+      }
+      #add-tag-button,
+      #add-comment-button {
+        color: gray;
+        opacity: 0.5;
+        padding: 0px;
+        font-size: 1.3em;
+        margin-left: 6px;
+        cursor: pointer;
+      }
+      #add-comment-text-area {
+        height: 300px;
+        margin-top: 10px;
+      }
+      .delete-button {
+        opacity: 0.3;
+        cursor: pointer;
+        margin-left: 9px;
+        display: none;
+      }
+      /* This overrides bootstrap's style for the text input
+	    box so that it will display the 'x' in chrome */
+	    input[type=search]::-webkit-search-cancel-button {
+		    -webkit-appearance: searchfield-cancel-button;
+      }
+      @media screen and (max-width: 750px) {
+        .hide-small {
+            display: none !important;
+        }
+      }
+      @media screen and (min-width: 751px) {
+
+      }
+    </style>
+
+    <title>Counseling Book Tags</title>
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <nav id="main-nav" class="navbar navbar-expand navbar-light">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link active" href="/">Home</a>
+        <a class="nav-item nav-link active" href="/search">Update</a>
+        <a class="nav-item nav-link active" href="#">About</a>
+        <a class="nav-item nav-link active" href="#">Contact</a>
+      </div>
+    </nav>
+    <!-- NAVBAR -->
+
+    <!-- PAGE CONTENT -->
+    <div class="container-fluid">
+      <div class="row no-gutters">
+        <div class="col">
+          <h4 id="book-title"></h4>
+          <h4 id="book-author" class="text-secondary"></h4>
+          <img id="book-cover" src="" alt="Book Cover Image">
+          <p id="book-publication"><span id="publisher"></span><span id="published-year"></span></p>
+          <h5>Description:<span id="up-arrow"><img src="./public/images/up_arrow.png" alt="Up Arrow"></span><span id="down-arrow"><img src="./public/images/down_arrow.png" alt="Down Arrow"></span></h5>
+          <p id="book-description"></p>
+        </div>
+
+        <div id="logged-out-message" class="col">
+            <br/>
+            <br/>
+            <h5>Please <span class="text-primary" id="log-in-button">log in</span> to edit comments and tags.</h5>
+            <br/>
+            <br/>
+        </div>
+
+        <div id="logged-in-content" class="col">
+          <br/>
+          <div id="tags-card" class="card">
+            <div class="card-body">
+              <h5 class="card-title">Tags:<span id="add-tag-button" data-toggle="modal" data-target="#add-tag-modal">&#43;</span></h5>
+              <p id="book-tags" class="card-text"></p>
+            </div>
+          </div>
+          <br/>
+          <div id="comments-card" class="card">
+            <div class="card-body">
+              <h5 class="card-title">Comments:<span id="add-comment-button" data-toggle="modal" data-target="#add-comment-modal">&#43;</span></h5>
+              <p id="book-comments" class="card-text"></p>
+            </div>
+          </div>
+          <br/>
+        </div>
+      </div>
+    </div>
+    <!-- PAGE CONTENT -->
+
+    <!-- MODAL WINDOWS -->
+
+    <!-- ADD TAG MODAL -->
+    <div class="modal fade" id="add-tag-modal" tabindex="-1" role="dialog" aria-labelledby="add-tag-modal-tile" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="add-tag-modal-tile">Add a tag</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div id="add-tag-modal-body" class="modal-body">
+            <input id="add-tag-input" type="search" class="form-control" placeholder="Add a new tag..." >
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button id="add-tag-submit" type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD COMMENT MODAL -->
+    <div class="modal fade" id="add-comment-modal" tabindex="-1" role="dialog" aria-labelledby="add-comment-modal-tile" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="add-comment-modal-tile">Add a comment</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div id="add-comment-modal-body" class="modal-body">
+            <input id="display-name" type="search" class="form-control" placeholder="Enter your name to display..." >
+            <textarea id="add-comment-text-area" class="form-control" placeholder="Add the body of your comment..."></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button id="add-comment-submit" type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL WINDOWS -->
+
+    <script src="https://www.gstatic.com/firebasejs/5.5.5/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.5.5/firebase-auth.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyDlzdteVZNXXjByfvR9_S0hJktDY2GIDP8",
+        authDomain: "counseling-book-tags.firebaseapp.com",
+        projectId: "counseling-book-tags"
+      };
+      firebase.initializeApp(config);
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script> -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script>
+      // ====== Start Utility Functions ======
+      function truncate(str, len){
+        // set up the substring
+        var subString = str.substr(0, len-1);
+        // add elipse after last complete word and trim trailing comma
+        return (
+          subString.substr(0, subString.lastIndexOf(' '))
+          .replace(/(^[,\s]+)|([,\s]+$)/g, '') + '...'
+        )
+      }
+
+      function toggleContentAndArrows(content, up, down) {
+        let query = $(`#${content}`); 
+        let downArrow = $(`#${down}`); 
+        let upArrow = $(`#${up}`); 
+
+        // check if element is Visible
+        var isVisible = query.is(':visible');
+    
+        if (isVisible === true) {
+          // element was Visible
+          query.hide()
+          downArrow.show()
+          upArrow.hide()
+        } else {
+          // element was Hidden
+          query.show()
+          downArrow.hide()
+          upArrow.show()
+        }
+      }
+
+      // ====== returns true if `userInput` does not contain unsafe characters ======
+      // ====== Note: `userInput` should be passed in as a string ======
+      function safeInput(userInput) {
+        if (userInput.includes("<") || userInput.includes(">") || userInput.includes("function(") || userInput.includes("function (") ) {
+          return false
+        } else {
+          return true
+        }
+      }
+
+      function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1)
+      }
+      // ====== End Utility Functions ======
+      var bookData
+      var userID
+      const bookID = (new URL(document.location)).searchParams.get("id")
+
+      // setting a function as the input parameter to use laster 
+      // when handling the returned data
+      function getBookDetails(handleData) {
+        $("#results-for-this-letter").html('')
+        $.ajax({
+          method: "GET",
+          url: "/api/v1/book/" + bookID,
+          success: function(data) {
+            handleData(data)
+          },
+          error: function() {
+            $('.container-fluid').html('')
+            $('.container-fluid').append(`<br/><br/><br/><p style="text-align:center;">Oops, looks like we couldn't find a book with that ID! Head back <a href="/">home</a> to try again.</p>`)
+          }
+        })
+      }  
+
+      getBookDetails(function(output) {
+        if (output) {
+          bookData = output
+          poulatePage()
+        } else {
+          // handle successful respons with no results
+          $('.container-fluid').html('')
+          $('.container-fluid').append(`<br/><br/><br/><p style="text-align:center;">Oops, looks like we couldn't find a book with that ID! Head back <a href="/">home</a> to try again.</p>`)
+        }
+      })
+
+      function poulatePage() {
+        $('#book-title').text(bookData.title)
+        $('#book-author').html("&nbsp&nbsp-&nbsp;" + bookData.author)
+        $('#book-cover').attr('src', bookData.cover)
+        $('#publisher').text(bookData.publisher)
+        $('#published-year').html("&nbsp;&copy;" + bookData.published)
+        $('#book-description').html(bookData.description)
+
+        if (bookData.tagObjects.length > 0) {
+          $('#book-tags').html('')
+          for (let index = 0; index < bookData.tagObjects.length; index++) {
+            const tagObject = bookData.tagObjects[index];
+
+            let displayTag
+            if (tagObject.tag.length > 40) { displayTag = truncate(tagObject.tag, 40) }
+            else { displayTag = tagObject.tag }
+            
+            $('#book-tags').append(`<a class="tag badge badge-pill" data-creator="${tagObject.creator}"><span class="tag-clicker" data-tag="${tagObject.tag}">${displayTag}</span><span class="delete-button" data-tag="${tagObject.tag}" data-creator="${tagObject.creator}">&#10005;</span></a>`)
+          }
+        } else {
+          $('#book-tags').html('<span class="text-secondary">There are no tags yet for this book.</span>')
+        }
+
+        if (bookData.comments.length > 0) {
+          $('#book-comments').html('')
+
+          for (let index = 0; index < bookData.comments.length; index++) {
+            const comment = bookData.comments[index];
+            $('#book-comments').append(`<hr /><p class="comment">"${comment.text}"<span class="text-secondary"> - ${comment.displayName}</span><span class="delete-button" data-comment-index="${index}" data-creator="${comment.creator}">&#10005;</span></p>`)
+          }
+        } else {
+          $('#book-comments').html('<span class="text-secondary">There are no comments yet for this book.</span>')
+        }
+
+        // ====== Add event listeners ======
+        document.getElementById("up-arrow").addEventListener("click", function(){
+          toggleContentAndArrows('book-description', 'up-arrow', 'down-arrow')
+        })
+        document.getElementById("down-arrow").addEventListener("click", function(){
+          toggleContentAndArrows('book-description', 'up-arrow', 'down-arrow')
+        })
+        $(".delete-button").on("click", function() { 
+          if ($(this).attr("data-tag")) {
+            let clickedTag = $(this).attr("data-tag")
+            let currentTagObjects = bookData.tagObjects
+            let currentTags = bookData.tags
+
+            let index = currentTags.indexOf(clickedTag)
+            currentTags.splice(index, 1)
+            currentTagObjects.splice(index, 1)
+
+            let updateObject = 
+            {
+              "tags" : currentTags,
+              "tagObjects" : currentTagObjects
+            }
+
+            $.ajax({
+              method: "PUT",
+              url: '/api/v1/book/' + bookID,
+              data: JSON.stringify(updateObject),
+              contentType: "application/json",
+              success: function(data) {
+                getBookDetails(function(output) {
+                  bookData = output
+                  poulatePage()
+                })
+              }
+            })
+          }
+
+          if ($(this).attr("data-comment-index")) {
+            let clickedComment = $(this).attr("data-comment-index")
+            let comments = bookData.comments
+            comments.splice(clickedComment, 1)
+
+            let updateObject = 
+            {
+              "comments" : comments
+            }
+
+            $.ajax({
+              method: "PUT",
+              url: '/api/v1/book/' + bookID,
+              data: JSON.stringify(updateObject),
+              contentType: "application/json",
+              success: function(data) {
+                getBookDetails(function(output) {
+                  bookData = output
+                  poulatePage()
+                })
+              }
+            })
+          }
+        })
+        $(".tag-clicker").on("click", function() { window.location.href = "/results?tags=" + $(this).attr("data-tag").replace(/,/g, '%2C') })
+
+        showDeleteButtons()
+      }
+
+      function addTag() {
+        let bookID = bookData._id
+        let newTag = capitalizeFirstLetter($('#add-tag-input').val().trim())
+        
+        if (newTag != '') {
+          if (safeInput(newTag)) {
+            let newTagObject = {
+            "tag" : newTag,
+            "creator" : userID
+            }
+
+            let currentTagObjects = bookData.tagObjects
+            currentTagObjects.push(newTagObject)
+            let currentTags = bookData.tags
+            currentTags.push(newTag)
+
+            let updateObject = 
+            {
+              "tags" : currentTags,
+              "tagObjects" : currentTagObjects
+            }
+
+            $.ajax({
+              method: "PUT",
+              url: '/api/v1/book/' + bookID,
+              data: JSON.stringify(updateObject),
+              contentType: "application/json",
+              success: function(data) {
+                getBookDetails(function(output) {
+                  bookData = output
+                  poulatePage()
+                })
+                $('#add-tag-input').val('')
+                $('#add-tag-modal').modal('toggle')
+              }
+            })
+          } else {
+            alert('Some characters are now allowed in tag text.')
+            $('#add-tag-input').val('')
+          }
+        } else {
+          alert('Please add some text for your tag!')
+        }
+      }
+
+      function addComment() {
+        let bookID = bookData._id
+        let newCommentText = $('#add-comment-text-area').val().trim().replace(/(\r\n|\n|\r)/g, '<br /><br />').replace(/<br \/><br \/><br \/><br \/>/g, '<br /><br />')
+        let displayName = capitalizeFirstLetter($('#display-name').val().trim())
+
+        // validating user input in display name
+        if (!safeInput(displayName)) { alert('Some characters are now allowed in display name.'); $('#display-name').val(''); $('#display-name').focus(); return; }
+
+        if (newCommentText != '') {
+          let newComment = {
+            "text" : newCommentText,
+            "displayName" : displayName,
+            "creator" : userID
+          }
+          let currentComments = bookData.comments
+          currentComments.push(newComment)
+          
+          let updateObject = 
+          {
+            "comments" : currentComments
+          }
+
+          $.ajax({
+            method: "PUT",
+            url: '/api/v1/book/' + bookID,
+            data: JSON.stringify(updateObject),
+            contentType: "application/json",
+            success: function(data) {
+              getBookDetails(function(output) {
+                bookData = output
+                poulatePage()
+              })
+              $('#add-comment-text-area').val('')
+              $('#display-name').val('')
+              $('#add-comment-modal').modal('toggle')
+            }
+          })
+
+        } else {
+          alert('Please add some text for your comment!')
+        }
+
+      }
+
+      function showDeleteButtons() {
+        // show delete buttons for elements created by this author
+        for (let index = 0; index < $(".delete-button").length; index++) {
+          const element = $(".delete-button")[index];
+          if (element.dataset.creator == userID ) { 
+            $(element).show() 
+            if ($(element).parent().is("a")) {
+              $(element).parent().removeClass("tag").addClass("selected-tag badge-light")
+            }
+          } else { 
+            $(element).hide() 
+            if ($(element).parent().is("a")) {
+              $(element).parent().removeClass("selected-tag badge-light").addClass("tag")
+            }
+          }
+        }
+      }
+
+      // ====== GENERAL EVENT LISTENERS ======
+      document.getElementById('add-tag-submit').addEventListener('click', function() {
+        addTag()
+      })
+      document.getElementById('add-comment-submit').addEventListener('click', function() {
+        addComment()
+      })
+      document.getElementById("log-in-button").addEventListener('click', logIn)
+      
+      // focus on modal inputs when loaded
+      $('#add-comment-modal').on('shown.bs.modal', function () {
+        setTimeout(function (){
+            $('#display-name').focus()
+        }, 100)
+      })
+      $('#add-tag-modal').on('shown.bs.modal', function () {
+        setTimeout(function (){
+            $('#add-tag-input').focus()
+        }, 100)
+      })
+
+      // ====== FIREBASE USER AUTHENTICATION ======
+
+      // checking if user is logged in or logs in during session
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          // User is already signed in
+          userID = firebase.auth().currentUser.uid
+          $('#logged-out-message').hide()
+          $('#logged-in-content').show()   
+          showDeleteButtons()
+        } else {
+          // User is not signed in yet
+          console.log("User is not logged in!")
+          $('#logged-in-content').hide()
+          $('#logged-out-message').show()
+          $(".delete-button").hide()
+          // logIn()
+        }
+      })
+
+      function logIn() {
+        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        // local persistance remains if browser is closed
+        .then(function() {
+          let provider = new firebase.auth.GoogleAuthProvider();
+          return firebase.auth().signInWithPopup(provider);
+        })
+        .then(function(result) {
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          var token = result.credential.accessToken;
+          // The signed-in user info.
+          var user = result.user;
+          userID = user.uid
+        }).catch(function(error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          // The email of the user's account used.
+          var email = error.email;
+          // The firebase.auth.AuthCredential type that was used.
+          var credential = error.credential;
+        })
+      }
+
+      function logOut() {
+        firebase.auth().signOut().then(function() {
+          // Sign-out successful.
+          userID = null
+          $('#logged-in-content').hide()
+          $('#logged-out-message').show()
+          $(".delete-button").hide()
+        }).catch(function(error) {
+          // An error happened.
+        })
+      }
+    </script>
+  </body>
+</html>
