@@ -7,57 +7,47 @@
     <style>
       body {
         background-color: #eaeaea;
+        color: #373f51;
       }
       #main-nav,
       #main-nav a {
         background-color: #c0d6df;
         color: #373f51;
       }
-      #page-content-label,
-      .warning-text {
-        color: #373f51;
-      }
-      #page-content-label {
-        margin-top: 15px;
-      }
-      .tag,
-      .static-tag {
-        cursor: pointer;
-        display: block;
-        padding: 5px 10px;
-        margin-right: 8px;
-        margin-bottom: 6px;
-        font-size: 0.8em;
-        color: #373f51;
-        background-color: #c0d6df;
+      #search-controls-column {
         display: inline-flex;
-        /* box-shadow: 2px 2px 4px lightgrey; */
+        margin-top: 50px;
+        margin-bottom: 20px;
       }
-      .static-tag {
-        cursor: default;
+      #search-button {
+        background-color: #373f51;
+        color: white;
       }
-      .selected-tag {
-        display: inline-flex;
-        padding: 6px 11px;
-        margin-right: 8px;
-        margin-bottom: 6px;
-        font-size: 0.8em;
-        color: #373f51;
-      }
-      #matching-books {
-        max-height: 72vh;
-        overflow-y: scroll;
-      }
-      .book-info,
-      .book-info:hover {
-        text-decoration: none;
-        color: #373f51;
-        margin-right: 10px;
-      }
-      .delete-button {
-        opacity: 0.3;
+      .new-book,
+      .database-book,
+      .alternate-book {
         cursor: pointer;
-        margin-left: 9px;
+      }
+      #alternate-book-list {
+        list-style: none;
+        padding-left: 0;
+      }
+      #database-books-header,
+      #new-books-header,
+      #new-books-sub-header,
+      #database-books-sub-header,
+      #database-books-spinner,
+      #new-books-spinner {
+        display: none;
+      }
+      #new-books-header,
+      #database-books-header {
+        margin-bottom: 0px;
+      }
+      /* This overrides bootstrap's style for the text input
+	    box so that it will display the 'x' in chrome */
+	    input[type=search]::-webkit-search-cancel-button {
+		    -webkit-appearance: searchfield-cancel-button;
       }
       @media screen and (max-width: 750px) {
         .hide-small {
@@ -68,6 +58,7 @@
 
       }
     </style>
+    <link rel="stylesheet" href="./public/styles/spinner.css">
 
     <title>Counseling Book Tags</title>
   </head>
@@ -76,155 +67,321 @@
     <nav id="main-nav" class="navbar navbar-expand navbar-light">
       <div class="navbar-nav">
         <a class="nav-item nav-link active" href="/">Home</a>
-        <a class="nav-item nav-link active" href="#">Update</a>
+        <a class="nav-item nav-link active" href="/search">Update</a>
         <a class="nav-item nav-link active" href="#">About</a>
         <a class="nav-item nav-link active" href="#">Contact</a>
       </div>
     </nav>
     <!-- NAVBAR -->
 
-      <!-- HEADER CONTENT -->
+    <!-- PAGE CONTENT -->
     <div class="container-fluid">
-      <div class="row hide-small" style="margin-top:20px;"></div>
-      <div class="row justify-content-center">
-        <h2 id="page-content-label">Results By Tag</h2>
-      </div>
-      <div class="row justify-content-center">
-        <div id="selected-tags"></div>
-      </div>
-      <!-- HEADER CONTENT -->
-
-      <!-- PAGE CONTENT -->
       <div class="row">
-        <div class="col-sm-1"></div>
-        <div id="matching-books" class="col">
-          <!-- This is where the book results go -->
+        <div class="col-sm-3"></div>
+        <div id="search-controls-column" class="col">
+          <div class="input-group mb-3">
+            <select style="max-width:95px;" class="custom-select" id="search-type">
+              <option value="title">Title</option>
+              <option value="author">Author</option>
+              <option value="isbn">ISBN</option>
+            </select>
+            <input id="search-input" type="search" class="form-control" placeholder="Search for a book..." aria-label="Recipient's username">
+            <div class="input-group-append">
+              <input id="search-button" class="btn" type="submit" value="Search">
+            </div>
+          </div>
         </div>
-        <div class="col-sm-1"></div>
+        <div class="col-sm-3"></div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <h4 id="database-books-header" class="text-center">Tagged Books</h4>
+          <p id="database-books-sub-header" class="text-secondary text-center">Click to add more tags to a book</p>
+          <div class="row justify-content-center">
+            <div id="database-books-spinner" class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+          </div>
+          <div id="database-book-results"></div>
+          <br/>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <h4 id="new-books-header" class="text-center">Untagged Books</h4>
+          <p id="new-books-sub-header" class="text-secondary text-center">Click to add a new book to the database</p>
+          <div class="row justify-content-center">
+            <div id="new-books-spinner" class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+          </div>
+          <div id="new-book-results"></div>
+        </div>
       </div>
     </div>
-      <!-- PAGE CONTENT -->
+    <!-- PAGE CONTENT -->
+
+    <!-- ADD NEW BOOK MODAL -->
+    <div class="modal fade" id="add-new-book-modal" tabindex="-1" role="dialog" aria-labelledby="add-new-book-tile" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="add-new-book-tile"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div id="add-new-book-modal-body" class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button id="add-new-book-button" type="button" class="btn btn-danger">Nope, add a new book</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ADD NEW BOOK MODAL -->
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script> -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script>
-      // to search a tag, navigate to `/search?TAG1,TAG2,TAG3` passing in tag names seperated by commas
-      // this variable will retrieve them to store as an array
-      var searchedTags = []
-      var bookData
-      function truncate(str, len){
-        // set up the substring
-        var subString = str.substr(0, len-1);
-        
-        return (
-          // add elipse after last complete word
-          subString.substr(0, subString.lastIndexOf(' '))
-          // trim trailing comma
-          .replace(/(^[,\s]+)|([,\s]+$)/g, '') + '...'
-        )
-      }
+      document.getElementById('search-button').addEventListener('click', function(){
+        const searchType = $('#search-type').val()
+        const searchValue = $('#search-input').val().trim()
+        $('#database-books-header').hide()
+        $('#new-books-header').hide()
+        $('#new-books-sub-header').hide()
+        $('#database-books-sub-header').hide()
 
-      window.location.search.replace(/\?/g, '').replace(/\%20/g, ' ').replace(/\%27/g, "'").split(',').forEach(element => {
-        searchedTags.push(element.replace(/\%2C/g, ','))
+        if (searchType === 'isbn') {
+          bookSearch(searchValue, 'isbn')
+        } else if (searchType === 'author') {
+          bookSearch(searchValue, 'author')
+        } else if (searchType === 'title') {
+          bookSearch(searchValue, 'title')
+        } else {
+          // How did you even get here?
+        }
       })
 
-      function getAllBooks(handleData) {
-        $("#results-for-this-letter").html('')
+      function bookSearch(searchValue, searchParam) {
+        $('#database-books-spinner').show()
+        $('#new-books-spinner').show()
+        $('#new-book-results').html('')
+        $('#database-book-results').html('')
+
+        let newBooks
+        let databaseBooks
+        let multiPage = false
+        $.when(
+          // Get matching new books from Goodreads API
+          $.ajax({
+            method: "GET",
+            url: `/api/v1/search/${searchParam}/${searchValue}`,
+            success: function(data) {
+              newBooks = data
+            }
+          }),
+          // Get matching books in the database
+          $.ajax({
+            method: "GET",
+            url: `/api/v1/book/${searchParam}/${searchValue}`,
+            success: function(data) {
+              databaseBooks = data
+            }
+          })
+        ).then(function() {
+          if (newBooks[0] && newBooks[0].totalPages && newBooks[0].totalPages > 1) { multiPage = true }
+          // Remove new books from the newBooks array if they are already in the database
+          if (databaseBooks && databaseBooks.length > 0 && !databaseBooks.message) {
+            for (let index = 0; index < newBooks.length; index++) {
+              const newBook = newBooks[index]
+              
+              for (let index = 0; index < databaseBooks.length; index++) {
+                const databaseBook = databaseBooks[index]
+
+                if (databaseBook.goodreadsBookID === newBook.goodreadsBookID) {
+                  newBooks.splice(index, 1)
+                }
+                // if (!newBook.goodreadsBookID || !newBook.title || !newBook.author || !newBook.isbn || !newBook.published || !newBook.publisher || !newBook.cover) {
+                //   console.log("1: " + newBook.goodreadsBookID, "2: " + newBook.title, "3: " + newBook.author, "4: " + newBook.isbn, "5: " + newBook.published, "6: " + newBook.publisher, "7: " + newBook.cover)
+                //   newBooks.splice(index, 1)
+                // }
+              }
+            }
+          }
+
+          // newBooks and databaseBooks now have non-duplicate values by this point in the function
+          if (!databaseBooks.message) {
+            populateDatabaseBooks(databaseBooks)
+          } else {
+            $('#database-books-spinner').hide()
+          }
+
+          if (multiPage) {
+            $.ajax({
+              method: "GET",
+              url: `/api/v1/search/${searchParam}/${searchValue}?page=2`,
+              success: function(data) {
+                newBooks = newBooks.concat(data)
+              }
+            }).then(function(){
+              if (databaseBooks && databaseBooks.length > 0 && !databaseBooks.message) {
+                // remove page count
+                newBooks.splice(0, 1)
+
+                for (let index = 0; index < newBooks.length; index++) {
+                  const newBook = newBooks[index]
+
+                  for (let index = 0; index < databaseBooks.length; index++) {
+                    const databaseBook = databaseBooks[index]
+                    
+                    if(databaseBook.goodreadsBookID === newBook.goodreadsBookID) {
+                      newBooks.splice(index, 1)
+                    }
+                  }
+                }
+              }
+              // $('#new-book-results').html('')
+              populateNewBooks(newBooks)
+            })
+          } else {
+            populateNewBooks(newBooks)
+          }
+        }).fail(function(){
+          // server error message
+          $('#database-book-results').html('<p class="text-center">There were no results matching this search. Please try a different search.</p>')
+          // clear input
+          // $('#search-input').val('')
+        })
+
+        // clear input
+        // $('#search-input').val('')
+      }
+
+      function addNewBook(goodreadsBookID) {
+        let newBookData
+
+        // Get full book details from Goodreads API
         $.ajax({
           method: "GET",
-          url: "/api/v1/book/tags/" + searchedTags,
+          url: `/api/v1/search/details/${goodreadsBookID}`,
           success: function(data) {
-            handleData(data)
+            newBookData = data
           },
-          error: function(error) {
-            // still calling handle data if no data is returned
-            handleData()
-          }
         })
-      }  
-      // sets book data returned from database to a variable without making the call synchronous
-      // though the asynchronous nature of this script breaks down to synchronous function calls
-      // pretty fast
-      getAllBooks(function(output) {
-        bookData = output || []
-        
-        if (bookData && bookData.length !== 0) { 
-          poulatePage()
-        } else {
-          // handle no results
-          $('#selected-tags').html('')
-          $('#selected-tags').append(`<br/><p class="warning-text">Oops, looks like you didn't select any tags to search by. Head back <a href="/">home</a> to try again!</p>`)
-        }
-      })
-
-      function poulatePage() {
-
-        // ====== Put main search tag on page ======
-        let displayTag
-        if (searchedTags[0] && searchedTags[0].length > 40) { 
-          displayTag = truncate(searchedTags[0], 40) 
-        } else {
-          displayTag = searchedTags[0]
-        }
-        $('#selected-tags').html('')
-        $('#selected-tags').append(`<button class="static-tag badge badge-pill" value="${searchedTags[0]}">${displayTag}</button>`)
-
-        // ====== Put any secondary search tags on page ======
-        for (let index = 1; index < searchedTags.length; index++) {
-          const tag = searchedTags[index];
-          let shortTag
-          if (tag && tag.length > 40) { 
-            shortTag = truncate(tag, 40) 
-          } else {
-            shortTag = tag
+        .then(function() {
+          let newBook = {
+            "goodreadsBookID": newBookData.goodreadsBookID,
+            "title": newBookData.title,
+            "author": newBookData.author,
+            "isbn": newBookData.isbn,
+            "isbn13": newBookData.isbn13,
+            "published": newBookData.published,
+            "publisher": newBookData.publisher,
+            "cover": newBookData.cover,
+            "description": newBookData.description,
+            "language": newBookData.language,
+            "sameBook": [],
+            "tagObjects": [],
+            "tags": [],
+            "comments": []
           }
-          $('#selected-tags').append(`<button class="badge selected-tag badge-pill badge-light" value="${tag}">${shortTag}<span class="delete-button" data-tag="${tag}">&#10005;</span></button>`)
-        }
-
-        // ====== Put book results on page ======
-        // console.log(bookData)
-        $('#matching-books').html('')
-        bookData.forEach(book => {
-          // Data I am going to use to populate the page:
-          let author = book.author[0]
-          let title = book.title
-          let bookID = book._id
-          let tagPile = ""
-          book.tags.forEach(tag => {
-            let shortTag
-            if (tag && tag.length > 40) { 
-              shortTag = truncate(tag, 40) 
-            } else {
-              shortTag = tag
+          // POST new book to the database
+          $.ajax({
+            method: "POST",
+            url: '/api/v1/book/',
+            data: JSON.stringify(newBook),
+            contentType: "application/json",
+            success: function(data) {
+              // Direct to book details page for this book
+              window.location.href = "/update?id=" + data
+            },
+            error: function() {
+              alert('Oh no! This book is missing some information required in order for us to be able to add it to the database. Please select a different new book or search by different criteria.')
             }
-            tagPile = tagPile + `<button class="tag badge badge-pill" value="${tag}" style="display:inline;">${shortTag}</button>`
           })
-
-          $('#matching-books').append(`<hr/><div class="row no-gutters"><div class="col"><a href="/details?${bookID}" class="book-info" style="display:inline;">${title} - ${author}</a></div><div class="col">${tagPile}</div></div>`)
-        })
-
-        // ====== Add event listeners ======
-        $(".tag").on("click", function() { 
-          let clickedTag = $(this).attr("value")
-          if (searchedTags.indexOf(clickedTag) == -1) {
-            window.location.href = window.location.href.replace(/\#/g, '') + "," + clickedTag.replace(/,/g, '%2C') 
-          } else {
-            alert(`You already selected the "${clickedTag}" tag!`)
-          }
-        })
-
-        $(".delete-button").on("click", function() { 
-          let clickedTag = $(this).attr("data-tag")
-          let index = searchedTags.indexOf(clickedTag)
-          searchedTags = searchedTags.splice(0, index)
-          for (let index = 0; index < searchedTags.length; index++) {
-            searchedTags[index] = searchedTags[index].replace(/,/g, '%2C')
-          }
-          searchedTags.join(',')
-          window.location.href = "/search?" + searchedTags
         })
       }
+
+      function populateDatabaseBooks(bookData) {
+        $('#database-books-header').show()
+        $('#database-books-sub-header').show()
+        
+        if (bookData) {
+          bookData.forEach(book => {
+            $('#database-book-results').append(`<span class="database-book" data-id="${book._id}">${book.title} - ${book.author[0]} (${book.published})</span><br/>`)
+          })
+        }
+        $('#database-books-spinner').hide()
+        $('.database-book').on("click", function(){ window.location.href = "/update?id=" + $(this).attr("data-id") })
+      }
+
+      function populateNewBooks(bookData) {
+        $('#new-books-header').show()
+        $('#new-books-sub-header').show()
+        // fires for paginated results
+        if (bookData[0] && bookData[0].totalPages) {
+          const pageInfo = bookData[0]
+          for (let index = 1; index < bookData.length; index++) {
+            const book = bookData[index]
+            $('#new-book-results').append(`<span class="new-book" data-goodreadsBookID="${book.goodreadsBookID}" data-title="${book.title}">${book.title} - ${book.author} (${book.published})</span><br/>`)
+          }
+        //fires for un-paginated results
+        } else {
+          bookData.forEach(book => {
+            $('#new-book-results').append(`<span class="new-book" data-goodreadsBookID="${book.goodreadsBookID}" data-title="${book.title}">${book.title} - ${book.author} (${book.published})</span></br>`)
+          })
+        }
+        $('#new-books-spinner').hide()
+
+        // ====== CLICKING A NEW BOOK, CHECK FOR DUPLICATES ======
+        $('.new-book').on("click", function(){ 
+          let goodreadsBookID = $(this).attr("data-goodreadsBookID") 
+          let titleKeyWords = $(this).attr("data-title")
+          let similarBookTitles
+
+          $.ajax({
+            method: "GET",
+            url: '/api/v1/book/title/' + titleKeyWords,
+            success: function(data) {
+              similarBookTitles = data
+            }
+          }).then(function(){
+            if (similarBookTitles.length > 0) {
+              $('#add-new-book-modal-body').html('')
+              $('#add-new-book-modal').modal('toggle')
+
+              let booksList = '<ul id="alternate-book-list">'
+              similarBookTitles.forEach(book => {
+                booksList += `<li class="alternate-book text-primary" data-bookID="${book._id}">${book.title}</li>`
+              })
+              booksList += '</ul>'
+            
+              if (similarBookTitles.length == 1) { $('#add-new-book-tile').text('Did you mean this book instead?') } 
+              else { $('#add-new-book-tile').text('Did you mean one of these books instead?') }
+              $('#add-new-book-modal-body').append(booksList)
+
+              $('.alternate-book').on('click', function(){
+                window.location.href = "/update?id=" + $(this).attr("data-bookID")
+              })
+              document.getElementById('add-new-book-button').addEventListener('click', function(){
+                // $('#add-new-book-modal').modal('toggle')
+                addNewBook(goodreadsBookID)
+              })
+            } else {
+              addNewBook(goodreadsBookID)
+            }           
+          })
+        })
+      }
+
+      // ====== ADD GENERAL EVENT LISTENERS ======
+
+      // trigger search click on enter in input field
+      let searchInput = document.getElementById("search-input")
+      searchInput.addEventListener("keyup", function(event) {
+        event.preventDefault()
+        if (event.keyCode === 13) {
+          document.getElementById("search-button").click()
+        }
+      })
     </script>
   </body>
 </html>

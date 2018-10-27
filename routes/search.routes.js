@@ -192,7 +192,8 @@ router.get('/details/:bookid', function(req, res) {
             "published" : book.publication_year[0],
             "publisher" : book.publisher[0],
             "cover" : book.image_url[0].replace(/m\//g, 'l/').replace(/col\//g, 'com/'),
-            "description" : book.description[0]
+            "description" : book.description[0],
+            "language" : book.language_code[0]
           }
 
           res.send(returnObject)
