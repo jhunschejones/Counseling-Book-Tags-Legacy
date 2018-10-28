@@ -12,5 +12,11 @@ router.get('/title/:title', book_controller.find_by_title)
 router.get('/author/:author', book_controller.find_by_author)
 router.get('/tags/:tags', book_controller.find_by_tags)
 router.get('/isbn/:isbn', book_controller.find_by_isbn)
+router.put('/tags/:id', book_controller.add_tags)
+router.delete('/tags/:id', book_controller.delete_tags)
+router.put('/comments/:id', book_controller.add_comments)
+router.delete('/comments/:id', book_controller.delete_comments)
+router.get('/utility/blank', book_controller.find_blank_books)
+router.get('/utility/missing', book_controller.find_books_missing_tags)
 
 module.exports = router

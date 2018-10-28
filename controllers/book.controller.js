@@ -32,12 +32,13 @@ function getAuthorKeyWords(authors) {
   // fires if input value is an array i.e. when adding a new book
   if (Array.isArray(authors)) {
     authors.forEach(author => {
-      const authorWords = author.split(" ")
+      // remove periods from the authors name
+      const authorWords = author.replace(/\./g,"").split(" ")
   
       authorWords.forEach(element => {
         // trim any spaces off the ends of the word
         element = element.trim()
-        // capitolize word
+        // capitalize word
         element = element.toUpperCase()
     
         // check if word is already in array
@@ -47,14 +48,15 @@ function getAuthorKeyWords(authors) {
         }
       })
     })
-  } else {
     // fires if input value is just a string
-    const authorWords = authors.split(" ")
+  } else {
+    // remove periods from the authors name
+    const authorWords = authors.replace(/\./g,"").split(" ")
   
     authorWords.forEach(element => {
       // trim any spaces off the ends of the word
       element = element.trim()
-      // capitolize word
+      // capitalize word
       element = element.toUpperCase()
   
       // check if word is already in array
@@ -93,8 +95,9 @@ exports.book_create_new_record = function (req, res) {
   // description field needs to be able to have html in it
   if (safeInput(JSON.stringify(req.body.title)) && safeInput(JSON.stringify(req.body.author)) && safeInput(JSON.stringify(req.body.isbn)) && safeInput(JSON.stringify(req.body.published)) && safeInput(JSON.stringify(req.body.publisher)) && safeInput(JSON.stringify(req.body.cover)) && safeInput(JSON.stringify(req.body.sameBook)) && safeInput(JSON.stringify(req.body.tagObjects)) && safeInput(JSON.stringify(req.body.tags)) && safeInput(JSON.stringify(req.body.comments))) {
 
+    // console.log("1: " + req.body.goodreadsBookID, "2: " + req.body.title, "3: " + req.body.author, "4: " + req.body.isbn, "5: " + req.body.published, "6: " + req.body.publisher, "7: " + req.body.cover)
     // checks required fields and handles instead of crashing
-    if (req.body.goodreadsBookID && req.body.title && req.body.author && req.body.isbn && req.body.published && req.body.publisher && req.body.cover) {
+    if (req.body.goodreadsBookID && req.body.title && req.body.author && req.body.isbn) {
       let keyWords = getTitleKeyWords(req.body.title)
       let authorWords = getAuthorKeyWords(req.body.author)
       // let tags_array
@@ -130,6 +133,7 @@ exports.book_create_new_record = function (req, res) {
       })
     } else {
       // not all required fields were passed with a value
+      // newrelic.recordCustomEvent("failed_to_add_book", { "goodreadsBookID": req.body.goodreadsBookID })
       res.status(500).send('`goodreadsBookID`, `title`, `author`, `isbn`, `published`, `publisher`, and `cover` are all required fields')
     }
   } else {
@@ -154,12 +158,13 @@ exports.book_details = function (req, res, next) {
 }
 
 exports.book_update = function (req, res, next) {
-  // Only the description field needs to be able to have html in it
-  if (safeInput(JSON.stringify(req.body))) {
-    // limiting the fields that can be updated via the API to: tagObjects, tags, and comments
-    let updateObject = {}
-    if (req.body.tagObjects) { updateObject.tagObjects = req.body.tagObjects }
-    if (req.body.tags) { updateObject.tags = req.body.tags }
+  // limiting the fields that can be updated via the API to: tagObjects, tags, and comments
+  let updateObject = {}
+  if (req.body.tagObjects) { updateObject.tagObjects = req.body.tagObjects }
+  if (req.body.tags) { updateObject.tags = req.body.tags }
+
+  // checks that no prohibited characters were placed in tags
+  if (safeInput(JSON.stringify(updateObject))) {
     if (req.body.comments) { updateObject.comments = req.body.comments }
     
     Book.findByIdAndUpdate(req.params.id, {$set: updateObject}, function (err, book) {
@@ -260,4 +265,93 @@ exports.find_by_isbn = function (req, res) {
   } else {
     res.status(400).send('Client must send a valid 10 or 13 digit isbn value')
   }
+}
+
+exports.add_tags = function (req, res, next) {
+  // full tag update
+  if (req.body.creator) {
+    let updateObject = {
+      "tag": req.body.tag,
+      "creator": req.body.creator
+    }
+    // $push just adds it, $addToSet adds if there are no duplicates
+    Book.findByIdAndUpdate(req.params.id, { $addToSet: { tagObjects: updateObject, tags: req.body.tag }}, function (err, book) {
+      if (err) return next(err)
+      res.send('Tag added successfully!')
+      return
+    })
+    // just update tags array
+  } else {
+    // $push just adds it, $addToSet adds if there are no duplicates
+    Book.findByIdAndUpdate(req.params.id, { $addToSet: { tags: req.body.tag }}, function (err, book) {
+      if (err) return next(err)
+      res.send('Tag added successfully!')
+      return
+    })
+  }
+}
+
+exports.delete_tags = function (req, res, next) {
+  let deleteObject = {
+    "tag": req.body.tag,
+    "creator": req.body.creator
+  }
+  Book.findByIdAndUpdate(req.params.id, { $pull: { tagObjects: deleteObject, tags: req.body.tag }}, function (err, result) {
+    if (err) return next(err)
+    res.send('Tag deleted successfully!')
+    return
+  })
+}
+
+exports.add_comments = function (req, res, next) {
+  let updateObject = {
+    "displayName": req.body.displayName,
+    "text": req.body.text,
+    "creator": req.body.creator
+  }
+  // $push just adds it, $addToSet adds if there are no duplicates
+  Book.findByIdAndUpdate(req.params.id, { $addToSet: { comments: updateObject }}, function (err, book) {
+    if (err) return next(err)
+    res.send('Comment added successfully!')
+    return
+  })
+}
+
+exports.delete_comments = function (req, res, next) {
+  let deleteObject = {
+    "displayName": req.body.displayName,
+    "text": req.body.text,
+    "creator": req.body.creator
+  }
+  Book.findByIdAndUpdate(req.params.id, { $pull: { comments: deleteObject }}, function (err, book) {
+    if (err) return next(err)
+    res.send('Comment deleted successfully!')
+    return
+  })
+}
+
+exports.find_blank_books = function (req, res) {
+  Book.find({ "tags": [] }, function (err, books) {
+    if (err) { return next(err) }
+    if (books.length === 0) { 
+      // res.status(404).send(`No books in the database with isbn: ${isbn}`) 
+      res.send({"message" : `No blank books in the database.`}) 
+      return
+    }
+    res.send(books)
+    return
+  })
+}
+
+exports.find_books_missing_tags = function (req, res) {
+  let booksMissingTags = []
+  Book.find({}, function (err, books) {
+    for (let index = 0; index < books.length; index++) {
+      const book = books[index];
+      if (book.tags.length < book.tagObjects.length) {
+        booksMissingTags.push(book)
+      }
+    }
+    res.send(booksMissingTags)
+  })
 }

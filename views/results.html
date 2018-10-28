@@ -130,7 +130,7 @@
         )
       }
 
-      window.location.search.replace(/\?/g, '').replace(/\%20/g, ' ').replace(/\%27/g, "'").split(',').forEach(element => {
+      (new URL(document.location)).searchParams.get("tags").replace(/\%20/g, ' ').replace(/\%27/g, "'").split(',').forEach(element => {
         searchedTags.push(element.replace(/\%2C/g, ','))
       })
 
@@ -206,7 +206,7 @@
             tagPile = tagPile + `<button class="tag badge badge-pill" value="${tag}" style="display:inline;">${shortTag}</button>`
           })
 
-          $('#matching-books').append(`<hr/><div class="row no-gutters"><div class="col"><a href="/details?${bookID}" class="book-info" style="display:inline;">${title} - ${author}</a></div><div class="col">${tagPile}</div></div>`)
+          $('#matching-books').append(`<hr/><div class="row no-gutters"><div class="col"><a href="/details?id=${bookID}" class="book-info" style="display:inline;">${title} - ${author}</a></div><div class="col">${tagPile}</div></div>`)
         })
 
         // ====== Add event listeners ======
@@ -227,7 +227,7 @@
             searchedTags[index] = searchedTags[index].replace(/,/g, '%2C')
           }
           searchedTags.join(',')
-          window.location.href = "/results?" + searchedTags
+          window.location.href = "/results?tags=" + searchedTags
         })
       }
     </script>

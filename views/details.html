@@ -68,7 +68,25 @@
       }
       #comments-card .card-body,
       #tags-card .card-body {
-        padding: 10px 15px;;
+        padding: 6px 15px 15px 15px;
+      }
+      .comment {
+        background-color: #c0d6df;
+        color: #373f51;
+        border-radius: 8px;
+        box-shadow: 2px 2px 4px lightgrey;
+        padding: 6px 12px;
+        display: inline-block;
+        margin-bottom: 0px;
+      }
+      #add-tag-button,
+      #add-comment-button {
+        color: gray;
+        opacity: 0.5;
+        padding: 0px;
+        font-size: 1.3em;
+        margin-left: 6px;
+        cursor: pointer;
       }
       @media screen and (max-width: 750px) {
         .hide-small {
@@ -110,14 +128,14 @@
           <br/>
           <div id="tags-card" class="card">
             <div class="card-body">
-              <h5 class="card-title">Tags:</h5>
+              <h5 class="card-title">Tags:<span id="add-tag-button">&#43;</span></h5>
               <p id="book-tags" class="card-text"></p>
             </div>
           </div>
           <br/>
           <div id="comments-card" class="card">
             <div class="card-body">
-              <h5 class="card-title">Comments:</h5>
+              <h5 class="card-title">Comments:<span id="add-comment-button">&#43;</span></h5>
               <p id="book-comments" class="card-text"></p>
             </div>
           </div>
@@ -164,7 +182,7 @@
       }
       // ====== End Utility Functions ======
       var bookData
-      const bookID = window.location.search.replace(/\?/g, '')
+      const bookID = (new URL(document.location)).searchParams.get("id")
 
       // setting a function as the input parameter to use laster 
       // when handling the returned data
@@ -217,9 +235,15 @@
         }
 
         if (bookData.comments.length > 0) {
-          bookData.comments.forEach(comment => {
-            $('#book-comments').append(`<span class="comment" data-comment-creator="${comment.creator}">${comment.text}</span>`)
-          })
+          for (let index = 0; index < bookData.comments.length; index++) {
+            const comment = bookData.comments[index]
+            
+            let horizontalRule
+            if (index === 0) { horizontalRule = "" }
+            else { horizontalRule = "<hr />" }
+
+            $('#book-comments').append(`${horizontalRule}<p class="comment">"${comment.text}"<span class="text-secondary"> - ${comment.displayName}</span></p>`)
+          }
         } else {
           $('#book-comments').html('<span class="text-secondary">There are no comments yet for this book.</span>')
         }
@@ -231,7 +255,13 @@
         document.getElementById("down-arrow").addEventListener("click", function(){
           toggleContentAndArrows('book-description', 'up-arrow', 'down-arrow')
         })
-        $(".tag").on("click", function() { window.location.href = "/results?" + $(this).attr("value").replace(/,/g, '%2C') })
+        $(".tag").on("click", function() { window.location.href = "/results?tags=" + $(this).attr("value").replace(/,/g, '%2C') })
+        document.getElementById('add-comment-button').addEventListener('click', function() {
+          window.location.href = window.location.href.replace('details', 'update')
+        })
+        document.getElementById('add-tag-button').addEventListener('click', function() {
+          window.location.href = window.location.href.replace('details', 'update')
+        })
       }
     </script>
   </body>

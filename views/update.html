@@ -93,7 +93,24 @@
       }
       #comments-card .card-body,
       #tags-card .card-body {
-        padding: 5px 15px 10px 15px;
+        padding: 6px 15px 15px 15px;
+      }
+      .comment-editable {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 2px 2px 4px lightgrey;
+        padding: 6px 12px;
+        display: inline-block;
+        margin-bottom: 0px;
+      }
+      .comment {
+        background-color: #c0d6df;
+        color: #373f51;
+        border-radius: 8px;
+        box-shadow: 2px 2px 4px lightgrey;
+        padding: 6px 12px;
+        display: inline-block;
+        margin-bottom: 0px;
       }
       #add-tag-button,
       #add-comment-button {
@@ -114,6 +131,9 @@
         margin-left: 9px;
         display: none;
       }
+      #tags-spinner {
+        display: none;
+      }
       /* This overrides bootstrap's style for the text input
 	    box so that it will display the 'x' in chrome */
 	    input[type=search]::-webkit-search-cancel-button {
@@ -128,6 +148,7 @@
 
       }
     </style>
+    <link rel="stylesheet" href="./public/styles/spinner.css">
 
     <title>Counseling Book Tags</title>
   </head>
@@ -172,6 +193,9 @@
             </div>
           </div>
           <br/>
+          <div class="row justify-content-center">
+            <div id="tags-spinner" class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+          </div>
           <div id="comments-card" class="card">
             <div class="card-body">
               <h5 class="card-title">Comments:<span id="add-comment-button" data-toggle="modal" data-target="#add-comment-modal">&#43;</span></h5>
@@ -295,11 +319,13 @@
       // ====== End Utility Functions ======
       var bookData
       var userID
+      var existingTags = []
       const bookID = (new URL(document.location)).searchParams.get("id")
 
       // setting a function as the input parameter to use laster 
       // when handling the returned data
       function getBookDetails(handleData) {
+        // $('#tags-spinner').show()
         $("#results-for-this-letter").html('')
         $.ajax({
           method: "GET",
@@ -334,6 +360,8 @@
         $('#book-description').html(bookData.description)
 
         if (bookData.tagObjects.length > 0) {
+          // reset existing tags
+          existingTags = []
           $('#book-tags').html('')
           for (let index = 0; index < bookData.tagObjects.length; index++) {
             const tagObject = bookData.tagObjects[index];
@@ -342,7 +370,8 @@
             if (tagObject.tag.length > 40) { displayTag = truncate(tagObject.tag, 40) }
             else { displayTag = tagObject.tag }
             
-            $('#book-tags').append(`<a class="tag badge badge-pill" data-creator="${tagObject.creator}"><span class="tag-clicker" data-tag="${tagObject.tag}">${displayTag}</span><span class="delete-button" data-tag="${tagObject.tag}" data-creator="${tagObject.creator}">&#10005;</span></a>`)
+            $('#book-tags').append(`<a class="tag badge badge-pill" data-tag="${tagObject.tag}" data-creator="${tagObject.creator}"><span class="tag-clicker" data-tag="${tagObject.tag}" data-creator="${tagObject.creator}">${displayTag}</span><span class="delete-button" data-tag="${tagObject.tag}" data-creator="${tagObject.creator}">&#10005;</span></a>`)
+            existingTags.push(tagObject.tag.toUpperCase())
           }
         } else {
           $('#book-tags').html('<span class="text-secondary">There are no tags yet for this book.</span>')
@@ -352,12 +381,18 @@
           $('#book-comments').html('')
 
           for (let index = 0; index < bookData.comments.length; index++) {
-            const comment = bookData.comments[index];
-            $('#book-comments').append(`<hr /><p class="comment">"${comment.text}"<span class="text-secondary"> - ${comment.displayName}</span><span class="delete-button" data-comment-index="${index}" data-creator="${comment.creator}">&#10005;</span></p>`)
+            const comment = bookData.comments[index]
+
+            let horizontalRule
+            if (index === 0) { horizontalRule = "" }
+            else { horizontalRule = "<hr />" }
+
+            $('#book-comments').append(`${horizontalRule}<p class="comment" data-creator="${comment.creator}">"${comment.text}"<span class="text-secondary"> - ${comment.displayName}</span><span class="delete-button" data-comment-index="${index}" data-creator="${comment.creator}">&#10005;</span></p>`)
           }
         } else {
           $('#book-comments').html('<span class="text-secondary">There are no comments yet for this book.</span>')
         }
+        $('#tags-spinner').hide()
 
         // ====== Add event listeners ======
         document.getElementById("up-arrow").addEventListener("click", function(){
@@ -368,24 +403,18 @@
         })
         $(".delete-button").on("click", function() { 
           if ($(this).attr("data-tag")) {
-            let clickedTag = $(this).attr("data-tag")
-            let currentTagObjects = bookData.tagObjects
-            let currentTags = bookData.tags
+            let deleteTag = $(this).attr("data-tag")
+            let deleteCreator = $(this).attr("data-creator")
 
-            let index = currentTags.indexOf(clickedTag)
-            currentTags.splice(index, 1)
-            currentTagObjects.splice(index, 1)
-
-            let updateObject = 
-            {
-              "tags" : currentTags,
-              "tagObjects" : currentTagObjects
+            let deleteObject = {
+              "tag" : deleteTag,
+              "creator" : deleteCreator
             }
 
             $.ajax({
-              method: "PUT",
-              url: '/api/v1/book/' + bookID,
-              data: JSON.stringify(updateObject),
+              method: "DELETE",
+              url: '/api/v1/book/tags/' + bookID,
+              data: JSON.stringify(deleteObject),
               contentType: "application/json",
               success: function(data) {
                 getBookDetails(function(output) {
@@ -397,19 +426,18 @@
           }
 
           if ($(this).attr("data-comment-index")) {
-            let clickedComment = $(this).attr("data-comment-index")
-            let comments = bookData.comments
-            comments.splice(clickedComment, 1)
+            let clickedComment = bookData.comments[$(this).attr("data-comment-index")]
 
-            let updateObject = 
-            {
-              "comments" : comments
+            let deleteObject = {
+              "displayName": clickedComment.displayName,
+              "text": clickedComment.text,
+              "creator": clickedComment.creator
             }
 
             $.ajax({
-              method: "PUT",
-              url: '/api/v1/book/' + bookID,
-              data: JSON.stringify(updateObject),
+              method: "DELETE",
+              url: '/api/v1/book/comments/' + bookID,
+              data: JSON.stringify(deleteObject),
               contentType: "application/json",
               success: function(data) {
                 getBookDetails(function(output) {
@@ -430,41 +458,38 @@
         let newTag = capitalizeFirstLetter($('#add-tag-input').val().trim())
         
         if (newTag != '') {
-          if (safeInput(newTag)) {
-            let newTagObject = {
-            "tag" : newTag,
-            "creator" : userID
-            }
-
-            let currentTagObjects = bookData.tagObjects
-            currentTagObjects.push(newTagObject)
-            let currentTags = bookData.tags
-            currentTags.push(newTag)
-
-            let updateObject = 
-            {
-              "tags" : currentTags,
-              "tagObjects" : currentTagObjects
-            }
-
-            $.ajax({
-              method: "PUT",
-              url: '/api/v1/book/' + bookID,
-              data: JSON.stringify(updateObject),
-              contentType: "application/json",
-              success: function(data) {
-                getBookDetails(function(output) {
-                  bookData = output
-                  poulatePage()
-                })
-                $('#add-tag-input').val('')
-                $('#add-tag-modal').modal('toggle')
+          if (existingTags.indexOf(newTag.toUpperCase()) === -1 ) {
+            if (safeInput(newTag)) {
+              let updateObject = {
+                "tag" : newTag,
+                "creator" : userID
               }
-            })
+
+              $.ajax({
+                method: "PUT",
+                url: '/api/v1/book/tags/' + bookID,
+                data: JSON.stringify(updateObject),
+                contentType: "application/json",
+                success: function(data) {
+                  getBookDetails(function(output) {
+                    bookData = output
+                    poulatePage()
+                  })
+                  $('#add-tag-input').val('')
+                  $('#add-tag-modal').modal('toggle')
+                }
+              })
+              // === UNSAFE CHARACTERS IN INPUT === 
+            } else {
+              alert('Some characters are now allowed in tag text.')
+              $('#add-tag-input').val('')
+            }
+            // === TAG ALREADY EXISTS
           } else {
-            alert('Some characters are now allowed in tag text.')
+            alert(`The "${newTag}" tag already exists!`)
             $('#add-tag-input').val('')
           }
+          // === BLANK USER INPUT === 
         } else {
           alert('Please add some text for your tag!')
         }
@@ -479,22 +504,15 @@
         if (!safeInput(displayName)) { alert('Some characters are now allowed in display name.'); $('#display-name').val(''); $('#display-name').focus(); return; }
 
         if (newCommentText != '') {
-          let newComment = {
+          let updateObject = {
             "text" : newCommentText,
             "displayName" : displayName,
             "creator" : userID
           }
-          let currentComments = bookData.comments
-          currentComments.push(newComment)
-          
-          let updateObject = 
-          {
-            "comments" : currentComments
-          }
 
           $.ajax({
             method: "PUT",
-            url: '/api/v1/book/' + bookID,
+            url: '/api/v1/book/comments/' + bookID,
             data: JSON.stringify(updateObject),
             contentType: "application/json",
             success: function(data) {
@@ -523,10 +541,16 @@
             if ($(element).parent().is("a")) {
               $(element).parent().removeClass("tag").addClass("selected-tag badge-light")
             }
+            if ($(element).parent().is("p")) {
+              $(element).parent().removeClass("comment").addClass("comment-editable")
+            }
           } else { 
             $(element).hide() 
             if ($(element).parent().is("a")) {
               $(element).parent().removeClass("selected-tag badge-light").addClass("tag")
+            }
+            if ($(element).parent().is("p")) {
+              $(element).parent().removeClass("comment-editable").addClass("comment")
             }
           }
         }
@@ -569,7 +593,6 @@
           $('#logged-in-content').hide()
           $('#logged-out-message').show()
           $(".delete-button").hide()
-          // logIn()
         }
       })
 

@@ -12,6 +12,17 @@
       #main-nav {
         background-color: #c0d6df;
       }
+      #page-name h4 {
+        text-align: right;
+        margin-bottom: 0px;
+        display: inline-flex;
+      }
+      #book-symbol {
+        height: 2em;
+        transform: rotate(15deg);
+        margin: 0px;
+        padding: 0px;
+      }
       #main-nav a,
       .letter-nav,
       #page-content-label {
@@ -98,13 +109,14 @@
   </head>
   <body>
     <!-- NAVBAR -->
-    <nav id="main-nav" class="navbar navbar-expand navbar-light">
+    <nav id="main-nav" class="navbar navbar-expand navbar-light justify-content-between">
       <div class="navbar-nav">
         <a class="nav-item nav-link active" href="/">Home</a>
         <a class="nav-item nav-link active" href="/search">Update</a>
         <a class="nav-item nav-link active" href="#">About</a>
         <a class="nav-item nav-link active" href="#">Contact</a>
       </div>
+      <!-- <div id="page-name" class="hide-small"><img id="book-symbol" src="./public/images/books.png"><h4>Counseling.Book.Tags</h4></div> -->
     </nav>
     <!-- NAVBAR -->
 
@@ -292,7 +304,7 @@
 
         // ====== Add event listener to each tag ======
         // calling here so all tags are on the page before it is called
-        $(".tag").on("click", function() { window.location.href = "/results?" + $(this).attr("value").replace(/,/g, '%2C') })
+        $(".tag").on("click", function() { window.location.href = "/results?tags=" + $(this).attr("value").replace(/,/g, '%2C') })
       }
 
       function searchFilter() {
