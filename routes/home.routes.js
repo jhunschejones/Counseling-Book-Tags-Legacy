@@ -22,4 +22,8 @@ router.get('/update', function(req, res) {
   res.sendFile(path.join(__dirname, '../views', 'update.html'))
 })
 
+router.get('/utility', function(req, res) {
+  res.sendFile(path.join(__dirname, '../views', 'utility.html'))
+})
+
 module.exports = router
