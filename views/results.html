@@ -64,6 +64,11 @@
         cursor: pointer;
         margin-left: 9px;
       }
+      #page-name h4 {
+        text-align: right;
+        margin-bottom: 0px;
+        display: inline-flex;
+      }
       @media screen and (max-width: 750px) {
         .hide-small {
             display: none !important;
@@ -78,13 +83,14 @@
   </head>
   <body>
     <!-- NAVBAR -->
-    <nav id="main-nav" class="navbar navbar-expand navbar-light">
+    <nav id="main-nav" class="navbar navbar-expand navbar-light justify-content-between">
       <div class="navbar-nav">
         <a class="nav-item nav-link active" href="/">Home</a>
         <a class="nav-item nav-link active" href="/search">Update</a>
-        <a class="nav-item nav-link active" href="#">About</a>
-        <a class="nav-item nav-link active" href="#">Contact</a>
+        <a class="nav-item nav-link active" href="/about">About</a>
+        <a class="nav-item nav-link active" href="/contact">Contact</a>
       </div>
+      <div id="page-name" class="hide-small"><h4>Counseling Book Tags</h4></div>
     </nav>
     <!-- NAVBAR -->
 

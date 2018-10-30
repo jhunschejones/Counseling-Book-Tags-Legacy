@@ -88,6 +88,11 @@
         margin-left: 6px;
         cursor: pointer;
       }
+      #page-name h4 {
+        text-align: right;
+        margin-bottom: 0px;
+        display: inline-flex;
+      }
       @media screen and (max-width: 750px) {
         .hide-small {
             display: none !important;
@@ -102,13 +107,14 @@
   </head>
   <body>
     <!-- NAVBAR -->
-    <nav id="main-nav" class="navbar navbar-expand navbar-light">
+    <nav id="main-nav" class="navbar navbar-expand navbar-light justify-content-between">
       <div class="navbar-nav">
         <a class="nav-item nav-link active" href="/">Home</a>
         <a class="nav-item nav-link active" href="/search">Update</a>
-        <a class="nav-item nav-link active" href="#">About</a>
-        <a class="nav-item nav-link active" href="#">Contact</a>
+        <a class="nav-item nav-link active" href="/about">About</a>
+        <a class="nav-item nav-link active" href="/contact">Contact</a>
       </div>
+      <div id="page-name" class="hide-small"><h4>Counseling Book Tags</h4></div>
     </nav>
     <!-- NAVBAR -->
 
@@ -242,7 +248,7 @@
             if (index === 0) { horizontalRule = "" }
             else { horizontalRule = "<hr />" }
 
-            $('#book-comments').append(`${horizontalRule}<p class="comment">"${comment.text}"<span class="text-secondary"> - ${comment.displayName}</span></p>`)
+            $('#book-comments').append(`${horizontalRule}<p class="comment">"${comment.text}"<span class="text-secondary"> - ${comment.displayName || "Unknown"}</span></p>`)
           }
         } else {
           $('#book-comments').html('<span class="text-secondary">There are no comments yet for this book.</span>')
