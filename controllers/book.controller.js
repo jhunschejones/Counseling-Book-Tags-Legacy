@@ -95,14 +95,10 @@ exports.book_create_new_record = function (req, res) {
   // description field needs to be able to have html in it
   if (safeInput(JSON.stringify(req.body.title)) && safeInput(JSON.stringify(req.body.author)) && safeInput(JSON.stringify(req.body.isbn)) && safeInput(JSON.stringify(req.body.published)) && safeInput(JSON.stringify(req.body.publisher)) && safeInput(JSON.stringify(req.body.cover)) && safeInput(JSON.stringify(req.body.sameBook)) && safeInput(JSON.stringify(req.body.tagObjects)) && safeInput(JSON.stringify(req.body.tags)) && safeInput(JSON.stringify(req.body.comments))) {
 
-    // console.log("1: " + req.body.goodreadsBookID, "2: " + req.body.title, "3: " + req.body.author, "4: " + req.body.isbn, "5: " + req.body.published, "6: " + req.body.publisher, "7: " + req.body.cover)
     // checks required fields and handles instead of crashing
     if (req.body.goodreadsBookID && req.body.title && req.body.author && req.body.isbn) {
       let keyWords = getTitleKeyWords(req.body.title)
       let authorWords = getAuthorKeyWords(req.body.author)
-      // let tags_array
-      // if (req.body.tagObjects) { tags_array = makeAllTagsArray(req.body.tagObjects) }
-      // else { tags_array = [] }
       
       let book = new Book(
         {
@@ -133,7 +129,7 @@ exports.book_create_new_record = function (req, res) {
       })
     } else {
       // not all required fields were passed with a value
-      // newrelic.recordCustomEvent("failed_to_add_book", { "goodreadsBookID": req.body.goodreadsBookID })
+      newrelic.recordCustomEvent("failed_to_add_book", { "goodreadsBookID": req.body.goodreadsBookID })
       res.status(500).send('`goodreadsBookID`, `title`, `author`, `isbn`, `published`, `publisher`, and `cover` are all required fields')
     }
   } else {
@@ -208,7 +204,6 @@ exports.find_by_author = function (req, res) {
   Book.find({ "authorKeyWords": { $all: authorWords } }, function (err, results) {
     if (err) { return next(err) }
     if (results.length === 0) { 
-      // res.status(400).send(`No book in the database with author: ${req.params.author}`) 
       res.send({"message" : `No book in the database with author: ${req.params.author}`}) 
       return
     }
@@ -243,7 +238,6 @@ exports.find_by_isbn = function (req, res) {
     Book.find({ "isbn": isbn }, function (err, book) {
       if (err) { return next(err) }
       if (book.length === 0) { 
-        // res.status(404).send(`No books in the database with isbn: ${isbn}`) 
         res.send({"message" : `No books in the database with isbn: ${isbn}`}) 
         return
       }
@@ -255,7 +249,6 @@ exports.find_by_isbn = function (req, res) {
     Book.find({ "isbn13": isbn }, function (err, book) {
       if (err) { return next(err) }
       if (book.length === 0) { 
-        // res.status(404).send(`No books in the database with isbn: ${isbn}`) 
         res.send({"message" : `No books in the database with isbn: ${isbn}`}) 
         return
       }
@@ -334,7 +327,6 @@ exports.find_blank_books = function (req, res) {
   Book.find({ "tags": [] }, function (err, books) {
     if (err) { return next(err) }
     if (books.length === 0) { 
-      // res.status(404).send(`No books in the database with isbn: ${isbn}`) 
       res.send({"message" : `No blank books in the database.`}) 
       return
     }

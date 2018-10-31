@@ -15,7 +15,6 @@ router.get('/title/:title', function(req, res) {
   },  
   (getErr, getRes, getBody) => {  
     if (getErr) {  
-      // console.error(getErr)
       res.status(500).send({ "error" : getErr })
       return
     } else { 
@@ -70,7 +69,6 @@ router.get('/author/:author', function(req, res) {
   },  
   (getErr, getRes, getBody) => {  
     if (getErr) {  
-      // console.error(getErr)
       res.status(500).send({ "error" : getErr })
       return
     } else { 
@@ -125,7 +123,6 @@ router.get('/isbn/:isbn', function(req, res) {
     },  
     (getErr, getRes, getBody) => {  
       if (getErr) {  
-        // console.error(getErr)
         res.status(500).send({ "error" : getErr })
         return
       } else { 
@@ -168,7 +165,6 @@ router.get('/details/:bookid', function(req, res) {
     },  
     (getErr, getRes, getBody) => {  
       if (getErr) {  
-        // console.error(getErr)
         res.status(500).send({ "error" : getErr })
         return
       } else { 
