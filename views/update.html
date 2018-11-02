@@ -596,8 +596,16 @@
           $('#logged-out-message').hide()
           $('#logged-in-content').show()   
           showDeleteButtons()
-          if (action === "add-tag") { $('#add-tag-modal').modal('toggle') }
-          if (action === "add-comment") { $('#add-comment-modal').modal('toggle') }
+          if (action === "add-tag") { 
+            $('#add-tag-modal').modal('toggle')
+            // remove action param from url
+            window.history.pushState({}, "", window.location.href.replace("&clicked=add-tag",""))
+          }
+          if (action === "add-comment") { 
+            $('#add-comment-modal').modal('toggle') 
+            // remove action param from url
+            window.history.pushState({}, "", window.location.href.replace("&clicked=add-comment",""))
+          }
         } else {
           // User is not signed in yet
           console.log("User is not logged in!")

@@ -31,8 +31,16 @@ if (cluster.isMaster) {
   const bodyParser = require('body-parser')
   const compression = require('compression')
   const app = express()
+  // security
+  const helmet = require('helmet'); 
+  const redirectToHTTPS = require('express-http-to-https').redirectToHTTPS;
+  const cors = require('cors');
+
   app.use(bodyParser.json())
   app.use(compression())
+  app.use(helmet());
+  app.use(redirectToHTTPS([/localhost:(\d{4})/]));
+  app.use(cors());
 
   // ====== Set up database connection ======
   const mongoose = require('mongoose')

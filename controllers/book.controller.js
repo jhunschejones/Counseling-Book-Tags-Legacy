@@ -289,7 +289,8 @@ exports.delete_tags = function (req, res, next) {
     "tag": req.body.tag,
     "creator": req.body.creator
   }
-  Book.findByIdAndUpdate(req.params.id, { $pull: { tagObjects: deleteObject, tags: req.body.tag }}, function (err, result) {
+  // {new: true} required in order to return the updated object
+  Book.findByIdAndUpdate(req.params.id, { $pull: { tagObjects: deleteObject, tags: req.body.tag }}, {new: true}, function (err, result) {
     if (err) return next(err)
     res.send('Tag deleted successfully!')
     return
@@ -323,7 +324,7 @@ exports.delete_comments = function (req, res, next) {
   })
 }
 
-exports.find_blank_books = function (req, res) {
+exports.find_blank_books = function (req, res, next) {
   Book.find({ "tags": [] }, function (err, books) {
     if (err) { return next(err) }
     if (books.length === 0) { 
