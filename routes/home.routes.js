@@ -22,6 +22,14 @@ router.get('/update', function(req, res) {
   res.sendFile(path.join(__dirname, '../views', 'update.html'))
 })
 
+router.get('/contact', function(req, res) {
+  res.sendFile(path.join(__dirname, '../views', 'contact.html'))
+})
+
+router.get('/about', function(req, res) {
+  res.sendFile(path.join(__dirname, '../views', 'about.html'))
+})
+
 router.get('/utility', function(req, res) {
   res.sendFile(path.join(__dirname, '../views', 'utility.html'))
 })
