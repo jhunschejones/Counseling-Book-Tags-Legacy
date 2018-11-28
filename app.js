@@ -8,7 +8,7 @@ if (cluster.isMaster) {
   var workerCount
 
   // create a worker for each CPU, limit 4
-  if (cpuCount > 4) { workerCount = 4 } 
+  if (cpuCount > 3) { workerCount = 3 } 
   else { workerCount = cpuCount }
 
   for (var i = 0; i < workerCount; i += 1) {
