@@ -29,6 +29,24 @@ function toggleContentAndArrows(content, up, down) {
     upArrow.show()
   }
 }
+
+function makeAuthorString(authorArray) {
+  if (authorArray.length > 1) {
+    let authorString = ''
+    authorArray.forEach(author => {
+      authorString = authorString + author + ', '
+    })
+    authorString = authorString.slice(0, -2)
+    return authorString
+  } else {
+    return authorArray[0]
+  }
+}
+
+function cleanDescriptionString(textInput) {
+  // remove tripple breaks and breaks before bullet points in lists
+  return textInput.replace(/<br \/><br \/><br \/>/g, '<br /><br />').replace(/<br \/><br \/>\•/g, '<br />&#8226;')
+}
 // ====== End Utility Functions ======
 var bookData
 const bookID = (new URL(document.location)).searchParams.get("id")
@@ -124,12 +142,13 @@ function addNewBook(goodreadsBookID, buttonClicked) {
 }
 
 function poulatePage() {
+
   $('#book-title').text(bookData.title)
-  $('#book-author').html("&nbsp&nbsp-&nbsp;" + bookData.author)
+  $('#book-author').html("&nbsp&nbsp-&nbsp;" + makeAuthorString(bookData.author))
   $('#book-cover').attr('src', bookData.cover)
   $('#publisher').text(bookData.publisher)
   $('#published-year').html("&nbsp;&copy;" + bookData.published)
-  $('#book-description').html(bookData.description)
+  $('#book-description').html(cleanDescriptionString(bookData.description))
 
   if (bookData.tagObjects && bookData.tagObjects.length > 0) {
     for (let index = 0; index < bookData.tagObjects.length; index++) {
