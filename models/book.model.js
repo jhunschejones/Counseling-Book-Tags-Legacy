@@ -23,6 +23,8 @@ let BookSchema = new Schema({
   tagObjects: {type: Array, required: false},
   tags: {type: Array, required: false},
   comments: {type: Array, required: false},
+  citations: {type: Array, required: false},
+  attributes: {type: Array, required: false},
 })
 
 module.exports = mongoose.model('Book', BookSchema)

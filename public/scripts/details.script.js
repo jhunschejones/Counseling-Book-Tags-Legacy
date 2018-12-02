@@ -122,7 +122,9 @@ function addNewBook(goodreadsBookID, buttonClicked) {
       "sameBook": [],
       "tagObjects": [],
       "tags": [],
-      "comments": []
+      "comments": [],
+      "citations": [],
+      "attributes": []
     }
     // POST new book to the database
     $.ajax({

@@ -116,7 +116,9 @@ exports.book_create_new_record = function (req, res) {
           description: req.body.description,
           tagObjects: req.body.tagObjects,
           tags: req.body.tags,
-          comments: req.body.comments
+          comments: req.body.comments,
+          citations: req.body.citations,
+          attributes: req.body.attributes
         }
       )
 
