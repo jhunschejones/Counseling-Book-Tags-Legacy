@@ -333,6 +333,9 @@ firebase.auth().onAuthStateChanged(function(user) {
     $('#logged-out-message').hide()
     $('#logged-in-content').show()   
     showDeleteButtons()
+    $('#log-out-button').show()
+    document.getElementById("log-out-button").addEventListener("click", logOut)
+
     if (action === "add-tag") { 
       $('#add-tag-modal').modal('toggle')
       // remove action param from url
@@ -349,6 +352,7 @@ firebase.auth().onAuthStateChanged(function(user) {
     $('#logged-in-content').hide()
     $('#logged-out-message').show()
     $(".delete-button").hide()
+    $('#log-out-button').hide()
   }
 })
 
@@ -383,6 +387,7 @@ function logOut() {
     $('#logged-in-content').hide()
     $('#logged-out-message').show()
     $(".delete-button").hide()
+    $('#log-out-button').hide()
   }).catch(function(error) {
     // An error happened.
   })

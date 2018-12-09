@@ -21,6 +21,9 @@ body,
 #main-nav {
   background-color: #c0d6df;
 }
+#log-out-button {
+  display: none;
+}
 #page-name h4 {
   text-align: right;
   margin-bottom: 0px;

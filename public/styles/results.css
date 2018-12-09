@@ -6,6 +6,9 @@ body {
   background-color: #c0d6df;
   color: #373f51;
 }
+#log-out-button {
+  display: none;
+}
 #page-content-label,
 .warning-text {
   color: #373f51;

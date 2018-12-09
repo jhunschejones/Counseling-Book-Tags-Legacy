@@ -25,6 +25,9 @@ body {
   background-color: #c0d6df;
   color: #373f51;
 }
+#log-out-button {
+  display: none;
+}
 #search-controls-column {
   display: inline-flex;
   margin-top: 50px;

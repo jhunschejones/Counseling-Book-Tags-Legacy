@@ -21,6 +21,7 @@
         <a class="nav-item nav-link active" href="/search">Search</a>
         <a class="nav-item nav-link active" href="/about">About</a>
         <a class="nav-item nav-link active" href="/contact">Contact</a>
+        <a id="log-out-button" class="nav-item nav-link active" href="#">Log out</a>
       </div>
       <div id="page-name" class="hide-small"><h4>Counseling Book Tags</h4></div>
     </nav>
@@ -52,5 +53,18 @@
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script> -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script src="./public/scripts/results.script.min.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/5.5.5/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.5.5/firebase-auth.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyDlzdteVZNXXjByfvR9_S0hJktDY2GIDP8",
+        authDomain: "counseling-book-tags.firebaseapp.com",
+        projectId: "counseling-book-tags"
+      };
+      firebase.initializeApp(config);
+    </script>
+    <script src="./public/scripts/logout.script.js"></script>
   </body>
 </html>
