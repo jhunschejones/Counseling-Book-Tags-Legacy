@@ -1,6 +1,6 @@
 // defining global variables (try to keep this list short Jones)
-var allBooks;
-var tagElements;
+let allBooks;
+let tagElements;
 
 function getAllBooks(handleData) {
   $("#results-for-this-letter").html('');
@@ -183,7 +183,7 @@ function setPageContentLabel(input) {
 
 function truncate(str, len){
   // set up the substring
-  var subString = str.substr(0, len-1);
+  let subString = str.substr(0, len-1);
   
   return (
     // add elipse after last complete word

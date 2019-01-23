@@ -1,7 +1,7 @@
 // ====== Start Utility Functions ======
 function truncate(str, len){
   // set up the substring
-  var subString = str.substr(0, len-1);
+  let subString = str.substr(0, len-1);
   // add elipse after last complete word and trim trailing comma
   return (
     subString.substr(0, subString.lastIndexOf(' '))
@@ -10,21 +10,21 @@ function truncate(str, len){
 }
 
 function toggleContentAndArrows(content, up, down) {
-  let query = $(`#${content}`); 
+  let element = $(`#${content}`); 
   let downArrow = $(`#${down}`); 
   let upArrow = $(`#${up}`); 
 
   // check if element is Visible
-  var isVisible = query.is(':visible');
+  const isVisible = element.is(':visible');
 
   if (isVisible === true) {
     // element was Visible
-    query.hide();
+    element.hide();
     downArrow.show();
     upArrow.hide();
   } else {
     // element was Hidden
-    query.show();
+    element.show();
     downArrow.hide();
     upArrow.show();
   }
@@ -62,9 +62,9 @@ function cleanDescriptionString(textInput) {
   return textInput.replace(/<br \/><br \/><br \/>/g, '<br /><br />').replace(/<br \/><br \/>\•/g, '<br />&#8226;');
 }
 // ====== End Utility Functions ======
-var bookData;
-var userID;
-var existingTags = [];
+let bookData;
+let userID;
+let existingTags = [];
 const bookID = (new URL(document.location)).searchParams.get("id");
 const action = (new URL(document.location)).searchParams.get("clicked") || false;
 
@@ -365,18 +365,18 @@ function logIn() {
   })
   .then(function(result) {
     // This gives you a Google Access Token. You can use it to access the Google API.
-    var token = result.credential.accessToken;
+    let token = result.credential.accessToken;
     // The signed-in user info.
-    var user = result.user;
+    let user = result.user;
     userID = user.uid;
   }).catch(function(error) {
     // Handle Errors here.
-    var errorCode = error.code;
-    var errorMessage = error.message;
+    const errorCode = error.code;
+    const errorMessage = error.message;
     // The email of the user's account used.
-    var email = error.email;
+    const email = error.email;
     // The firebase.auth.AuthCredential type that was used.
-    var credential = error.credential;
+    const credential = error.credential;
   });
 }
 

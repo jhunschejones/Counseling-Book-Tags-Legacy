@@ -1,10 +1,10 @@
 // to search a tag, navigate to `/search?TAG1,TAG2,TAG3` passing in tag names seperated by commas
 // this variable will retrieve them to store as an array
-var searchedTags = [];
-var bookData;
+let searchedTags = [];
+let bookData;
 function truncate(str, len){
   // set up the substring
-  var subString = str.substr(0, len-1);
+  let subString = str.substr(0, len-1);
   
   return (
     // add elipse after last complete word

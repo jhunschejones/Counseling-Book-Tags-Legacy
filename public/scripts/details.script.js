@@ -1,7 +1,7 @@
 // ====== Start Utility Functions ======
 function truncate(str, len){
   // set up the substring
-  var subString = str.substr(0, len-1);
+  let subString = str.substr(0, len-1);
   // add elipse after last complete word and trim trailing comma
   return (
     subString.substr(0, subString.lastIndexOf(' '))
@@ -10,21 +10,21 @@ function truncate(str, len){
 }
 
 function toggleContentAndArrows(content, up, down) {
-  let query = $(`#${content}`); 
-  let downArrow = $(`#${down}`); 
-  let upArrow = $(`#${up}`); 
+  const element = $(`#${content}`); 
+  const downArrow = $(`#${down}`); 
+  const upArrow = $(`#${up}`); 
 
   // check if element is Visible
-  var isVisible = query.is(':visible');
+  const isVisible = element.is(':visible');
 
   if (isVisible === true) {
     // element was Visible
-    query.hide();
+    element.hide();
     downArrow.show();
     upArrow.hide();
   } else {
     // element was Hidden
-    query.show();
+    element.show();
     downArrow.hide();
     upArrow.show();
   }
@@ -48,9 +48,9 @@ function cleanDescriptionString(textInput) {
   return textInput.replace(/<br \/><br \/><br \/>/g, '<br /><br />').replace(/<br \/><br \/>\•/g, '<br />&#8226;');
 }
 // ====== End Utility Functions ======
-var bookData;
+let bookData;
 const bookID = (new URL(document.location)).searchParams.get("id");
-var bookLocation;
+let bookLocation;
 if (bookID.length === 24) { bookLocation = "database"; }
 else { bookLocation = "goodreadsAPI"; }
 
