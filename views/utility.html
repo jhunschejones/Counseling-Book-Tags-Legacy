@@ -85,18 +85,18 @@
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script> -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script>
-      var blankBooks
-      var missingTagBooks
+      var blankBooks;
+      var missingTagBooks;
 
       function findBlankBooks() {
         $.ajax({
           method: "GET",
           url: "/api/v1/book/utility/blank",
           success: function(data) {
-            blankBooks = data
+            blankBooks = data;
           }
         }).then(function() {
-          $('#blank-books-count').text(`Blank books: ${blankBooks.length || 0}`)
+          $('#blank-books-count').text(`Blank books: ${blankBooks.length || 0}`);
         })
       }
 
@@ -107,11 +107,11 @@
               method: "DELETE",
               url: "/api/v1/book/" + book._id,
             })          
-          })
-          $('#blank-books-deleted').text('Blank books deleted.')
+          });
+          $('#blank-books-deleted').text('Blank books deleted.');
           findBlankBooks()
         } else {
-          $('#blank-books-deleted').text('No blank books to delete!')
+          $('#blank-books-deleted').text('No blank books to delete!');
         }
       }
 
@@ -120,19 +120,19 @@
           method: "GET",
           url: "/api/v1/book/utility/missing",
           success: function(data) {
-            missingTagBooks = data
+            missingTagBooks = data;
           }
         }).then(function() {
-          $('#missing-books-count').text(`Books missing tags: ${missingTagBooks.length || 0}`)
-        })
+          $('#missing-books-count').text(`Books missing tags: ${missingTagBooks.length || 0}`);
+        });
       }
 
       function updateMissingTagBooks() {
         if (missingTagBooks.length > 0) {
           missingTagBooks.forEach(book => {
-            let newTags = []
+            let newTags = [];
             book.tagObjects.forEach(tagObject => {
-              newTags.push(tagObject.tag)
+              newTags.push(tagObject.tag);
             })
             newTags.forEach(tag => {
               let updateObject = 
@@ -144,20 +144,20 @@
                 url: '/api/v1/book/tags/' + book._id,
                 data: JSON.stringify(updateObject),
                 contentType: "application/json"
-              })
-            })
-          })
-          $('#missing-books-modified').text('Books missing tags have been updated.')
+              });
+            });
+          });
+          $('#missing-books-modified').text('Books missing tags have been updated.');
         } else {
-          $('#missing-books-modified').text('There are no books missing tags!')
+          $('#missing-books-modified').text('There are no books missing tags!');
         }
       }
 
       // ====== ADD EVENT LISTENERS ======
-      document.getElementById('find-blank-books').addEventListener('click', findBlankBooks)
-      document.getElementById('delete-blank-books').addEventListener('click', deleteBooks)
-      document.getElementById('find-books-missing-tags').addEventListener('click', findMissingTagBooks)
-      document.getElementById('update-books-missing-tags').addEventListener('click', updateMissingTagBooks)    
+      document.getElementById('find-blank-books').addEventListener('click', findBlankBooks);
+      document.getElementById('delete-blank-books').addEventListener('click', deleteBooks);
+      document.getElementById('find-books-missing-tags').addEventListener('click', findMissingTagBooks);
+      document.getElementById('update-books-missing-tags').addEventListener('click', updateMissingTagBooks);  
     </script>
   </body>
 </html>

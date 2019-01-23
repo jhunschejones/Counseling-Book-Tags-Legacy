@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 // ====== Model Notes: ======
 // `author` is an array to accomidate multiple authors
@@ -25,6 +25,6 @@ let BookSchema = new Schema({
   comments: {type: Array, required: false},
   citations: {type: Array, required: false},
   attributes: {type: Array, required: false},
-})
+});
 
-module.exports = mongoose.model('Book', BookSchema)
+module.exports = mongoose.model('Book', BookSchema);

@@ -247,11 +247,11 @@ function generateAPIdocumentation(hostPath) {
         }
       }]
     },
-  ]
-  return apiDocumentation
+  ];
+  return apiDocumentation;
 }
 
 exports.display_api_documentation = function (req, res) {
-  const documentation = generateAPIdocumentation(req.headers.host)
-  res.send(documentation)
-}
+  const documentation = generateAPIdocumentation(req.headers.host);
+  res.send(documentation);
+};
