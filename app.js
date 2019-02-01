@@ -39,6 +39,17 @@ if (cluster.isMaster) {
   const redirectToHTTPS = require('express-http-to-https').redirectToHTTPS;
   const cors = require('cors');
 
+  // limit requests to 100 per 15mins in production
+  const rateLimit = require('express-rate-limit');
+  app.enable("trust proxy"); 
+  const apiLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000,
+    max: 200,
+    message: "Too many requests from this IP, please try again in 15 minutes",
+    statusCode: 429
+  });
+  if (process.env.NODE_ENV === 'production') { app.use("/api/", apiLimiter); }
+
   app.use(bodyParser.json());
   app.use(compression());
   app.use(helmet());
