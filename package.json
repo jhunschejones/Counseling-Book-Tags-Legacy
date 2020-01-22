@@ -23,9 +23,9 @@
     "express-rate-limit": "^3.5.3",
     "helmet": "^3.21.2",
     "lodash": "^4.17.15",
-    "mongoose": "^5.7.11",
+    "mongoose": "^5.8.9",
     "newrelic": "^5.13",
     "request": "^2.88.0",
-    "xml2js": "^0.4.22"
+    "xml2js": "^0.4.23"
   }
 }
