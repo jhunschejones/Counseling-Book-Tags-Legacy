@@ -24,7 +24,7 @@
     "helmet": "^3.21.2",
     "lodash": "^4.17.15",
     "mongoose": "^5.8.11",
-    "newrelic": "^5.13",
+    "newrelic": "^6.3.0",
     "request": "^2.88.0",
     "xml2js": "^0.4.23"
   }
