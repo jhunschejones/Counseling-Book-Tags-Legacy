@@ -22,7 +22,7 @@
     "express-http-to-https": "^1.1.4",
     "express-rate-limit": "^3.5.3",
     "helmet": "^3.22.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "mongoose": "^5.9.6",
     "newrelic": "^6.5.0",
     "request": "^2.88.2",
